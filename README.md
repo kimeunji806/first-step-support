@@ -1,6 +1,6 @@
 # the_first
 
-<table>
+<table align="center">
   <tr> 
     <td align="center"><a href=https://github.com/time1014><img src="https://avatars.githubusercontent.com/u/64236748?v=4" width="100px;" alt=""/><br /><sub><b>방진영</b></sub></a><br />
     </td>
