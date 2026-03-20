@@ -1,6 +1,7 @@
 import AppLayout from '@/layout/AppLayout.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 
+
 import counsel_index from '@/router/counsel_index';
 import institution_index from '@/router/institution_index';
 import mypage_index from '@/router/mypage_index';
@@ -11,6 +12,7 @@ import register_index from '@/router/register_index';
 import result_index from '@/router/result_index';
 import sign_index from '@/router/sign_index';
 import survey_index from '@/router/survey_index';
+
 
 const router = createRouter({
     history: createWebHistory(),
@@ -91,14 +93,30 @@ const router = createRouter({
                     component: () => import('@/views/pages/Crud.vue')
                 }
             ]
-        },
-        ...institution_index,
+      },
 
         {
             path: '/auth/access',
             name: 'accessDenied',
             component: () => import('@/views/pages/auth/Access.vue')
         }
+
+        {
+            path: '/sign/login',
+            name: 'login',
+            component: () => import('@/views/pages/auth/Login.vue')
+        },
+        ...sign_index,
+        ...counsel_index,
+        ...institution_index,
+        ...mypage_index,
+        ...notice_index,
+        ...plan_index,
+        ...priority_index,
+        ...register_index,
+        ...result_index,
+        ...survey_index
+
     ]
 });
 
