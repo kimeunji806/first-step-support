@@ -1,3 +1,4 @@
+
 import AppLayout from '@/layout/AppLayout.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 
@@ -12,9 +13,11 @@ import result_index from '@/router/result_index';
 import sign_index from '@/router/sign_index';
 import survey_index from '@/router/survey_index';
 
+
 const router = createRouter({
     history: createWebHistory(),
     routes: [
+
         {
             path: '/sign/login',
             name: 'login',
@@ -30,6 +33,7 @@ const router = createRouter({
         ...register_index,
         ...result_index,
         ...survey_index
+
     ]
 });
 
