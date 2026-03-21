@@ -99,7 +99,7 @@ const router = createRouter({
             path: '/auth/access',
             name: 'accessDenied',
             component: () => import('@/views/pages/auth/Access.vue')
-        }
+        },
 
         {
             path: '/sign/login',
