@@ -8,5 +8,10 @@ export default [
         path: '/sign/register',
         name: 'register',
         component: () => import('@/views/pages/sign/register.vue')
-    }
+    },
+    {
+        path: '/sign/access',
+        name: 'accessWait',
+        component: () => import('@/views/pages/sign/Access.vue')
+        },
 ];

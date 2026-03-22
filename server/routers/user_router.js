@@ -8,4 +8,12 @@ router.get("/users", async (req, res) => {
   res.send(result);
 });
 
+router.post("/login",async(req,res)=>{
+  console.log(req.body);
+  const { user_id ,user_pw } = req.body;
+  let result = await userService.loginService(user_id ,user_pw);
+  console.log(result)
+  res.send(result);
+})
+
 module.exports = router;

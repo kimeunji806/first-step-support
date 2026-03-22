@@ -1,20 +1,45 @@
 <script setup>
-import FloatingConfigurator from '@/components/FloatingConfigurator.vue';
-import { ref , onBeforeMount } from 'vue';
+import FloatingConfigurator from '@/components/FloatingConfigurator.vue'
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/user'
 
-const userId = ref('');
-const userPassword = ref('');
+const router = useRouter();
 
-const userLogin = async() => {
-    let result = await fetch(`/api/login`)
-        .then((resp) => resp.json)
-        .catch((err) => console.log(err))
+const userId = ref('')
+const userPassword = ref('')
+
+const userLogin = async () => {
+    let result = await fetch(`/api/login`, {
+        method: "post",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            user_id: userId.value,
+            user_pw: userPassword.value
+        }),
+    })
+    .then((resp) => resp.json())
+    .catch((err) => console.log(err))
+
+    if (result && result.user_no) {
+        const user = result
+
+        const userStore = useUserStore()
+        userStore.setUser(user)
+
+        if (Number(user.approval) === 0) {
+            router.push('/sign/access') // 승인 대기
+        } else {
+            router.push('/auth/access') // 나중에 승인시 갈 페이지
+        }
+    } else {
+        alert("아이디 또는 비밀번호 틀림")
+    }
 }
 
-onBeforeMount(() => {
-    userLogin();
-})
-
+const userSign = () => {
+    router.push('/sign/register')
+}
 </script>
 
 <template>
@@ -55,8 +80,8 @@ onBeforeMount(() => {
                             <span class="font-medium no-underline ml-2 text-right cursor-pointer text-primary">아이디 찾기</span>
                             <span class="font-medium no-underline ml-2 text-right cursor-pointer text-primary">비밀번호 찾기</span>
                         </div>
-                        <Button id="login" label="login" class="w-full" as="router-link" to="/"></Button>
-                        <Button   id="register" label="Sign In" class="w-full" as="router-link" to="/"></Button>
+                        <Button id="login" label="login" class="w-full" @click="userLogin"></Button>
+                        <Button   id="register" label="Sign In" class="w-full" @click="userSign"></Button>
                     </div>
                 </div>
             </div>

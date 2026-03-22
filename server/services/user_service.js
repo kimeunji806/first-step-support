@@ -5,4 +5,9 @@ const findAll = async () => {
   return list;
 };
 
-module.exports = { findAll };
+const loginService = async (id,pw) =>{
+  let login = await userMapper.loginUser(id,pw);
+  return login;
+}
+
+module.exports = { findAll , loginService };
