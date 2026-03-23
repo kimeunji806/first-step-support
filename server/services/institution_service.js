@@ -10,7 +10,7 @@ const findAll = async () => {
 const modifyInfo = async (institutioninfo) => {
   let result = await institutionMapper.updateInstitution(institutioninfo);
   let resObj = {
-    status: result.changeRows > 0 || result.affectedRows > 0,
+    status: result?.affectedRows > 0,
     target: {
       ...institutioninfo,
     },

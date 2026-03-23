@@ -13,7 +13,7 @@ const model = ref([
             {
                 label: '마이페이지',
                 icon: 'pi pi-fw pi-user',
-                to: '/institutioninfo'
+                to: ['/institutioninfo', '/institutioninfo/edit']
             },
             {
                 label: '공지사항',

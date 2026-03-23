@@ -10,10 +10,15 @@ router.get("/institutioninfo", async (req, res) => {
 });
 
 // 기관정보 수정
-router.put("/iinstitutioninfo", async (req, res) => {
-  let target = req.body;
-  let result = await institutionService.modifyInfo(target);
-  res.send(result);
+router.put("/institutioninfo", async (req, res) => {
+  try {
+    let target = req.body;
+    let result = await institutionService.modifyInfo(target);
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ error: err.message });
+  }
 });
 
 module.exports = router;

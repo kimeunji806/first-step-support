@@ -16,14 +16,13 @@ const selectAllInstitution = async () => {
 };
 
 // 기관정보 수정
-const updateInstitution = async (institution_no, updateData) => {
+const updateInstitution = async (updateData) => {
   let conn = null;
   try {
     conn = await pool.getConnection();
     await conn.beginTransaction(); // Auto Commit 해제
     let [result] = await conn.query(institutionSql.updateInstitution, [
       updateData,
-      institution_no,
     ]);
     conn.commit();
     return result;

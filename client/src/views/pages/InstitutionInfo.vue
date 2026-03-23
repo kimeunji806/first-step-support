@@ -1,36 +1,23 @@
 <script setup>
 import { ref, onBeforeMount } from 'vue';
+import { useRouter } from 'vue-router';
 const activeTab = ref('0');
 const institution = ref(null);
+const router = useRouter();
 
 // 기관정보 조회
 const findAllInfo = async () => {
-    let info = await fetch(`http://localhost:3000/institutioninfo`)
-        .then((res) => res.json())
-        .catch((err) => console.log(err));
-    institution.value = info;
+    try {
+        const res = await fetch(`http://localhost:3000/institutioninfo`);
+        const info = await res.json();
+        institution.value = info;
+    } catch (err) {
+        console.log(err);
+    }
 };
 
-// 기관정보 수정
-const UpdateInstitutionInfo = async () => {
-    let data = {
-        name: institution.value.name,
-        tel: institution.value.tel,
-        institution_tel: institution.value.institution_tel,
-        institution_address: institution.value.institution_address,
-        institution_email: institution.value.institution_email,
-        operation: institution.value.operation
-    };
-    let result = await fetch('http://localhost:3000/institutioninfo', {
-        method: 'PUT',
-        headers: {
-            'content-type': 'application/json'
-        },
-        body: JSON.stringify(data)
-    })
-        .then((res) => res.json())
-        .catch((err) => console.log(err));
-    result.status;
+const goToEditForm = () => {
+    router.push('/institution/edit');
 };
 
 onBeforeMount(() => {
@@ -69,7 +56,7 @@ onBeforeMount(() => {
                 <div v-else-if="activeTab === '1'" class="mt-4">로딩중...</div>
 
                 <div class="flex justify-end mt-4">
-                    <Button label="수정" @click="UpdateInstitutionInfo"></Button>
+                    <Button label="수정" @click="goToEditForm"></Button>
                 </div>
             </div>
         </div>
