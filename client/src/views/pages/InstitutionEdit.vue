@@ -41,7 +41,7 @@ const goToEditForm = () => {
     })
         .then((res) => res.json())
         .then((result) => {
-            console.log('수정완료:', result);
+            console.log('수정완료1:', result);
         })
         .catch((err) => console.log('수정실패:', err));
 };
