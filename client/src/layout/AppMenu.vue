@@ -1,8 +1,11 @@
 <script setup>
-import { ref } from 'vue';
+import { computed } from 'vue';
 import AppMenuItem from './AppMenuItem.vue';
+import { useUserStore } from '@/stores/user'
+const userStore = useUserStore()
 
-const model = ref([
+
+const model = computed(()=>[
     {
         items: [
             {
@@ -13,13 +16,25 @@ const model = ref([
             {
                 label: '마이페이지',
                 icon: 'pi pi-fw pi-user',
-                to: ['/institutioninfo', '/institutioninfo/edit']
+                to: '/institutioninfo'
             },
+            // 기관관리자로 로그인시 사이드바 추가
+            ...(userStore.role === 'e3' ? [{
+                label: '담당자 조회',
+                icon: 'pi pi-fw pi pi-users',
+                to: '/info/manager'
+            }] : []),
+            ...(userStore.role === 'e3' ? [{
+                label: '회원가입 승인',
+                icon: 'pi pi-fw pi pi-verified',
+                to: '/auth/approval'
+            }] : []),
             {
                 label: '공지사항',
                 icon: 'pi pi-fw pi-bell',
-                to: '/notice'
-            }
+                to: '/'
+            },
+            
         ]
     }
 ]);

@@ -30,3 +30,6 @@ const userRouter = require("./routers/user_router.js");
 app.use("/", userRouter);
 const institutionRouter = require("./routers/institution_router.js");
 app.use("/", institutionRouter);
+const infoRouter = require("./routers/info_router");
+app.use("/", infoRouter);
+
