@@ -35,19 +35,16 @@ const model = computed(() => [
             },
             // 기관관리자(e3) 전용 메뉴 통합
             ...(userStore.role === 'e3'
-                ? [
-                      {
-                          label: '담당자 조회',
-                          icon: 'pi pi-fw pi-users',
-                          to: '/info/manager'
-                      },
-                      {
-                          label: '회원가입 승인',
-                          icon: 'pi pi-fw pi-verified',
-                          to: '/auth/approval'
-                      }
-                  ]
-                : []),
+                ? [{
+                    label: '담당자 조회',
+                    icon: 'pi pi-fw pi-users',
+                    to: '/info/manager'
+                }, {
+                        label: '회원가입 승인',
+                        icon: 'pi pi-fw pi-verified',
+                        to: '/auth/approval'
+                    }
+                ]: []),
             {
                 label: '공지사항',
                 icon: 'pi pi-fw pi-bell',
