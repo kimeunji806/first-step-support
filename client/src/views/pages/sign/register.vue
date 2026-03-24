@@ -41,14 +41,6 @@ const sendCode = async (email) => {
         .then((resp) => resp.json())
         .then((data) => {
             console.log(data);
-            // alert("메일 발송 완료");
-
-            // if (data.retCode == 'OK') {
-            //     alert('메일발송성공');
-            //     location.reload();
-            // } else {
-            //     alert('발송실패');
-            // }
         })
         .catch((err) => console.log(err));
 };
@@ -83,8 +75,8 @@ const verifyCode = async (code) => {
     });
 
     const data = await res.json();
-
-    if (data.retCode === 'OK') {
+    console.log(data);
+    if (data.retCode === 'true') {
         alert('인증 성공');
     } else {
         alert(data.message);

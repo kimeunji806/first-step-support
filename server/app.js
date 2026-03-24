@@ -46,6 +46,8 @@ app.post("/verify", (req, res) => {
   const { user_email, code } = req.body;
   try {
     const data = codeStore.get(user_email);
+    console.log(data.code);
+    console.log(code);
 
     if (!data) throw new Error("요청없음");
 
@@ -57,6 +59,7 @@ app.post("/verify", (req, res) => {
     if (data.code !== code) {
       throw new Error("틀림");
     }
+    res.json({ retCode: true });
 
     codeStore.delete(user_email);
   } catch (err) {}
