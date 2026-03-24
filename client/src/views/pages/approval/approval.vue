@@ -1,11 +1,15 @@
 <script setup>
 import { ref , onBeforeMount } from 'vue';
 import { FilterMatchMode } from '@primevue/core/api';
+import { useUserStore } from '@/stores/user'
+
+const userStore = useUserStore()
+const ins_no = userStore.institution;
+
 const approvalList = ref([]);
 
-
-const approval = async () => {
-    await fetch(`/api/approval`)
+const approval = async (ins_no) => {
+    await fetch(`/api/approval/${ins_no}`)
         .then((resp) => resp.json())
         .then((data) => {           
             approvalList.value = Array.isArray(data) ? data : [data];
@@ -14,8 +18,32 @@ const approval = async () => {
         .catch(err => console.log(err))
 }
 
+
+const approvalAcess = async(e) => {
+    const tr = e.target.closest('tr');
+    const userId = tr.children[2].innerText;
+    const userName = tr.children[1].innerText;
+    let result = await fetch('/api/access', {
+        method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ userId })
+    })
+        .then((resp) => resp.json())
+        .catch((err) => console.log(err))
+
+    if (result.update == "success") {
+        alert(`${userName}님의 회원가입 승인처리 완료`)
+        await approval(ins_no);
+    } else {
+        alert('승인처리 중에 문제가 생겼습니다')
+    }
+}
+
+
 onBeforeMount(() => {
-    approval();
+    approval(ins_no);
 })
 
 
@@ -63,7 +91,7 @@ const filters = ref({
                     label="승인"
                     severity="success"
                     size="small"
-                    @click=""/>
+                    @click="approvalAcess"/>
                 </template>
             </Column>
         </DataTable>

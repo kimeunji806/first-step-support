@@ -34,3 +34,6 @@ const mypageRouter = require("./routers/mypage_router"); //마이페이지 지�
 app.use("/api/mypage", mypageRouter);
 const institutionMyPageRouter = require("./routers/institution_mypage_router"); //마이페이지 기관담당자
 app.use("/institutionmypage", institutionMyPageRouter);
+const infoRouter = require("./routers/info_router");
+app.use("/", infoRouter);
+

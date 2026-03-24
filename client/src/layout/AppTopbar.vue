@@ -1,8 +1,18 @@
 <script setup>
 import { useLayout } from '@/layout/composables/layout';
 import AppConfigurator from './AppConfigurator.vue';
+import { useUserStore } from '@/stores/user'
+import { useRouter } from 'vue-router'
 
 const { toggleMenu, toggleDarkMode, isDarkTheme } = useLayout();
+
+const userStore = useUserStore();
+const router = useRouter();
+
+const logOut = () => {
+    userStore.logout();
+    router.push('/sign/login');
+}
 </script>
 
 <template>
@@ -36,6 +46,7 @@ const { toggleMenu, toggleDarkMode, isDarkTheme } = useLayout();
 
         <div class="layout-topbar-actions">
             <div class="layout-config-menu">
+                <Button label="로그아웃" raised @click="logOut" />
                 <button type="button" class="layout-topbar-action" @click="toggleDarkMode">
                     <i :class="['pi', { 'pi-moon': isDarkTheme, 'pi-sun': !isDarkTheme }]"></i>
                 </button>

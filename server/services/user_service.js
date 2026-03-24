@@ -27,7 +27,7 @@ const createUser = async (userObj) => {
     address,
     institution,
   ];
-  let result = await userMapper.insertUser(insertData);
+  // let result = await userMapper.insertUser(insertData);
 
   // let resObj = {
   //   status: result.insertId > 0 ? "success" : "fail",
@@ -49,9 +49,16 @@ const loginService = async (id,pw) =>{
   return result;
 }
 
-const approvalAccess = async () => {
-  let result = await userMapper.approval();
+const approvalAccess = async (insNo) => {
+  let result = await userMapper.approval(insNo);
   return result;
 }
 
-module.exports = { findAll , loginService ,createUser ,approvalAccess};
+const signAccess = async (userId) => {
+  let result = await userMapper.access(userId);
+  return result;
+}
+
+
+
+module.exports = { findAll , loginService, createUser  ,approvalAccess,signAccess};

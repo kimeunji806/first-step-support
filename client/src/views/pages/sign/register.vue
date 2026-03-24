@@ -1,10 +1,7 @@
 <script setup>
 import FloatingConfigurator from '@/components/FloatingConfigurator.vue';
 
-// import { generateRandomNumber, sendEmail } from '@/components/register/NodeMailer';
-
 import router from '@/router';
-// import { send } from 'vite';
 
 import { reactive, ref } from 'vue';
 const clickRole = async (role_name) => {
@@ -25,13 +22,34 @@ const info = reactive({
 });
 
 const sendCode = async (email) => {
-    const code = generateRandomNumber(6);
+    // const code = generateRandomNumber(6);
+    // codeStore.set(email, {
+    //     code,
+    //     expiresAt: Date.now() + 3 * 60 * 1000
+    // });
+    console.log(email);
+    await fetch('/api/mail', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json' // ⭐ 필수
+        },
+        body: JSON.stringify({
+            email: email
+        })
+    })
+        .then((resp) => resp.json())
+        .then((data) => {
+            console.log(data);
+            // alert("메일 발송 완료");
 
-    codeStore.set(email, {
-        code,
-        expiresAt: Date.now() + 3 * 60 * 1000
-    });
-    await sendEmail(email, code);
+            // if (data.retCode == 'OK') {
+            //     alert('메일발송성공');
+            //     location.reload();
+            // } else {
+            //     alert('발송실패');
+            // }
+        })
+        .catch((err) => console.log(err));
 };
 
 const verifyCode = (email, inputCode) => {

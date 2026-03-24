@@ -20,10 +20,26 @@ router.post("/login", async (req, res) => {
   res.send(result);
 });
 
-router.get("/approval", async (req, res) => {
-  let result = await userService.approvalAccess();
+router.get("/approval/:no", async (req, res) => {
+  let insNo = req.params.no;
+  let result = await userService.approvalAccess(insNo);
   res.send(result);
 })
+
+router.put("/access", async (req, res) => {
+  const userId = req.body;
+  let result = await userService.signAccess(userId);
+  if (result.affectedRows === 1) {
+    res.send({update : 'success'})
+  }
+  res.send({update : 'fail'})
+})
+  
+
+
+
+
+
 
 
 module.exports = router;

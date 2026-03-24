@@ -6,7 +6,8 @@ export const useUserStore = defineStore('user', {
     role: '',
     user_id: '',
     user_name: '',
-    approval: 0
+    approval: 0,
+    institution: 0,
   }),
   actions: {
     setUser(user) {
@@ -15,6 +16,7 @@ export const useUserStore = defineStore('user', {
       this.user_id = user.user_id
       this.user_name = user.user_name
       this.approval = user.approval
+      this.institution = user.institution_no
 
 
       localStorage.setItem('user', JSON.stringify(user))

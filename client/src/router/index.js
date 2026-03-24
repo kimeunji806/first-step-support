@@ -44,7 +44,7 @@ router.beforeEach((to,from, next) => {
     }
 
     // 승인 안됨
-    if (Number(userStore.approval) === 0) {
+    if (userStore.approval === 0) {
         if (to.path !== '/sign/access') {
             if (to.path == '/sign/login' || to.path == '/sign/register') {
                 return next()
@@ -53,10 +53,15 @@ router.beforeEach((to,from, next) => {
         }
         return next()
     }
+    //관리자가 아닌데 회원가입 승인 페이지 갈때
+    if (userStore.role !== 'e3' && to.path === '/auth/approval') {
+        return next('/') // 이 루트가 회원가입으로 되어있음 나중에 페이지 만들면 경로 수정
+    }
 
     // 승인된 유저가 승인대기 접근 막기
-    if (Number(userStore.approval) === 1 && to.path === '/sign/access') {
+    if (userStore.approval === 1 && to.path === '/sign/access') {
         return next('/') //승인된 사람이 주소에 쳐서 들어갈때 다른곳으로 이동시킬거
+                        // 이 루트가 회원가입으로 되어있음 나중에 페이지 만들면 경로 수정
     }
 
     next()
