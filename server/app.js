@@ -62,7 +62,12 @@ app.post("/verify", (req, res) => {
     res.json({ retCode: true });
 
     codeStore.delete(user_email);
-  } catch (err) {}
+  } catch (err) {
+    res.status(400).json({
+      retCode: false,
+      message: err.message,
+    });
+  }
 });
 
 // 기능별 라우터 모듈 등록
@@ -76,4 +81,3 @@ const institutionMyPageRouter = require("./routers/institution_mypage_router"); 
 app.use("/institutionmypage", institutionMyPageRouter);
 const infoRouter = require("./routers/info_router");
 app.use("/", infoRouter);
-

@@ -53,22 +53,6 @@ const sendCode = async (email) => {
         .catch((err) => console.log(err));
 };
 
-// const verifyCode = (email, inputCode) => {
-//     const data = codeStore.get(email);
-
-//     if (!data) throw new Error('요청없음');
-
-//     if (Date.now() > data.expiresAt) {
-//         codeStore.delete(email);
-//         throw new Error('만료됨');
-//     }
-//     if (data.code !== inputCode) {
-//         throw new Error('틀림');
-//     }
-//     codeStore.delete(email);
-//     return '인증성공';
-// };
-
 const verifyCode = async (code) => {
     let emailData = {
         user_email: info.user_email,
@@ -87,7 +71,7 @@ const verifyCode = async (code) => {
     if (data.retCode === true) {
         alert('인증 성공');
     } else {
-        alert(data.message);
+        alert('인증 실패');
     }
 };
 
