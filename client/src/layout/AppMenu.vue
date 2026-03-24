@@ -1,8 +1,8 @@
 <script setup>
 import { computed } from 'vue';
 import AppMenuItem from './AppMenuItem.vue';
-import { useUserStore } from '@/stores/user'
-const userStore = useUserStore()
+import { useUserStore } from '@/stores/user';
+const userStore = useUserStore();
 
 // localStorage에서 로그인 사용자 정보 가져오기
 const loginUser = JSON.parse(localStorage.getItem('user'));
@@ -31,21 +31,23 @@ const model = computed(() => [
                 label: '마이페이지',
                 icon: 'pi pi-fw pi-user',
                 // 우선순위에 따라 하나의 경로만 지정 (배열은 사용 불가)
-                to: '/pages/mypage' 
+                to: '/pages/mypage'
             },
             // 기관관리자(e3) 전용 메뉴 통합
-            ...(userStore.role === 'e3' ? [
-                {
-                    label: '담당자 조회',
-                    icon: 'pi pi-fw pi-users',
-                    to: '/info/manager'
-                },
-                {
-                    label: '회원가입 승인',
-                    icon: 'pi pi-fw pi-verified',
-                    to: '/auth/approval'
-                }
-            ] : []),
+            ...(userStore.role === 'e3'
+                ? [
+                      {
+                          label: '담당자 조회',
+                          icon: 'pi pi-fw pi-users',
+                          to: '/info/manager'
+                      },
+                      {
+                          label: '회원가입 승인',
+                          icon: 'pi pi-fw pi-verified',
+                          to: '/auth/approval'
+                      }
+                  ]
+                : []),
             {
                 label: '공지사항',
                 icon: 'pi pi-fw pi-bell',
