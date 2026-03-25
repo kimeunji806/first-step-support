@@ -1,15 +1,18 @@
 const { pool } = require("../DAO");
 
-const List = `
-SELECT c.counsel_title as title
-        ,c.counsel_content as content
-        ,f.file_name as filename
-        ,DATE_FORMAT(c.counsel_date, '%Y-%m-%d') as counseldate
-        ,u.user_name as name
-        ,DATE_FORMAT(c.created_at, '%Y-%m-%d') as created_at
-FROM counsel c JOIN user u ON c.writer_no = u.user_no
-              JOIN files f ON f.counsel_no = c.counsel_no
-WHERE c.beneficiaries_no = ?
+const list = `
+SELECT b.beneficiaries_name as beneficiaries_name
+        ,g.user_name as guardian_name
+        ,DATE_FORMAT(s.created_at, '%Y-%m-%d') as created_at
+        ,p.priority_id as priority_id
+        ,g.user_no as gurdian_no
+FROM survey_input s
+JOIN user u ON s.manager_no = u.user_no
+JOIN beneficiaries b ON b.beneficiaries_no = s.beneficiaries_no
+LEFT JOIN user g 
+    ON b.guardian_no = g.user_no
+LEFT JOIN priority p ON s.survey_no = p.survey_no
+WHERE s.manager_no = ?;
 `;
 
-module.exports = { List };
+module.exports = { list };

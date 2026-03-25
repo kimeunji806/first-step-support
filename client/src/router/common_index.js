@@ -1,6 +1,6 @@
 export default [
     {
-        path: '/common',
+        path: '/common/:no',
         name: 'common',
         component: () => import('@/views/pages/common/Common.vue'),
         children: [

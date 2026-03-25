@@ -2,17 +2,6 @@
 import FloatingConfigurator from '@/components/FloatingConfigurator.vue';
 import { ref } from 'vue';
 
-const user_name = ref('');
-const user_id = ref('');
-const user_pw = ref('');
-const user_pwd = ref('');
-const user_email = ref('');
-const user_account = ref('');
-const tel = ref('');
-const address = ref('');
-const institution = ref('');
-
-const checked = ref(false);
 </script>
 
 <template>
