@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, shallowRef,onBeforeMount } from 'vue';
+import { ref, computed, shallowRef, onBeforeMount } from 'vue';
 import { RouterLink, RouterView } from 'vue-router';
 
 import counselForm from '@/components/counsel/CounselForm.vue';
@@ -20,40 +20,41 @@ const dropdownValues = [
 
 const dropdownValue = shallowRef(null);
 
+import { useRoute } from 'vue-router';
+const route = useRoute();
+const selectNo = Number(route.params.no);
 
-    import { useRoute } from "vue-router";
-    const route = useRoute();
-    const selectNo = route.params.no;
+const user = ref([]);
+console.log(selectNo);
 
-    const user = ref([]);
-    console.log(selectNo)
+onBeforeMount(async () => {
+    await fetch(`/api/beneficiaries/${selectNo}`)
+        .then((resp) => resp.json())
+        .then((data) => {
+            if (data.gender == 'c1') {
+                data.gender = '남';
+            } else {
+                data.gender = '여';
+            }
 
-onBeforeMount(async() => {
-
-        await fetch(`/api/lists/${selectNo}`)
-            .then((resp) => resp.json())
-            .then((data) => {
             user.value = data;
-            console.log(data)
-            })
-            .catch((err) => console.log(err));
-        
+        })
+        .catch((err) => console.log(err));
 });
-
 
 // 임시 데이터
 // 나중에는 선택된 대상자/조사지 상세 조회값으로 교체
 const targetInfo = ref({
     // beneficiaries_name: user.beneficiaries_name,
     // guardian_name: user.guardian_name,
-    priority_name: "홍길동",
-    gender: "야",
-    birth: "2001.01.01",
-    disability_type: "ㅡㅡ",
+    // priority_name: '홍길동',
+    // gender: '야',
+    // birth: '2001.01.01',
+    // disability_type: 'ㅡㅡ',
     manager_no: null,
-    sub_manager_no: null,
-    survey_no: 1001,
-    beneficiaries_no: "1"
+    sub_manager_no: null
+    // survey_no: 1001,
+    // beneficiaries_no: '1'
 });
 
 // 담당자와 부담당자가 둘 다 있어야 "지정 완료"
@@ -83,16 +84,16 @@ const handleAssigned = (data) => {
                             <div class="w-full rounded-md p-4">{{ user[0].guardian_name }}</div>
 
                             <div class="w-full rounded-md p-4">우선순위</div>
-                            <div class="w-full rounded-md p-4">{{ targetInfo.priority_name }}</div>
+                            <div class="w-full rounded-md p-4">{{ user[0].priority_id }}</div>
 
                             <div class="w-full rounded-md p-4">성별</div>
-                            <div class="w-full rounded-md p-4">{{ targetInfo.gender }}</div>
+                            <div class="w-full rounded-md p-4">{{ user.gender }}</div>
 
                             <div class="w-full rounded-md p-4">생년월일</div>
-                            <div class="w-full rounded-md p-4">{{ targetInfo.birth }}</div>
+                            <div class="w-full rounded-md p-4">{{ user[0].birth }}</div>
 
                             <div class="w-full rounded-md p-4">장애유형</div>
-                            <div class="w-full rounded-md p-4">{{ targetInfo.disability_type }}</div>
+                            <div class="w-full rounded-md p-4">{{ user[0].disability_type }}</div>
                         </div>
                     </div>
                 </div>
@@ -119,7 +120,8 @@ const handleAssigned = (data) => {
                 <!-- 담당자 미지정 -->
                 <div v-if="!isAssigned">
                     <div class="font-semibold text-xl mb-4">담당자 지정</div>
-                    <ManagerAssignForm v-if="!isAssigned" :survey-no="targetInfo.survey_no" :institution-no="1" @assigned="handleAssigned" />
+                    <ManagerAssignForm v-if="!isAssigned" :survey-no="selectNo" :institution-no="1" @assigned="handleAssigned" />
+                    <!-- 조사지 번호 땜에 좀 바꿨어요! -->
                 </div>
 
                 <!-- 담당자 지정 완료 -->
