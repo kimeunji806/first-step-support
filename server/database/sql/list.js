@@ -26,6 +26,10 @@ SELECT b.beneficiaries_name as beneficiaries_name
         ,DATE_FORMAT(b.birth, '%Y-%m-%d')  as birth
         ,b.disability_type as disability_type
         ,b.beneficiaries_no as beneficiaries_no
+        ,s.manager_no as manager_no
+        ,s.sub_manager_no as sub_manager_no
+        ,s.survey_no as survey_no
+        ,b.institution_no as institution_no
 FROM survey_input s
 JOIN user u ON s.manager_no = u.user_no
 JOIN beneficiaries b ON b.beneficiaries_no = s.beneficiaries_no

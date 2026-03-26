@@ -1,9 +1,11 @@
 <script setup>
 import { useRoute, useRouter } from 'vue-router';
 import { ref, onBeforeMount } from 'vue';
+import { useUserStore } from '@/stores/user';
 
 const route = useRoute();
 const router = useRouter();
+const userStore = useUserStore();
 
 const activeTab = ref(route.query.tab || '0');
 const institution = ref({});
@@ -11,9 +13,14 @@ const institution = ref({});
 // 기관정보 조회 API
 const findAllInfo = async () => {
     try {
-        const res = await fetch(`/api/admin/institutioninfo`);
+        const insNo = userStore.institution;
+
+        const res = await fetch(`/api/admin/institutioninfo?institution_no=${insNo}`);
         const info = await res.json();
-        institution.value = info;
+        institution.value = {
+            ...info,
+            institution_no: insNo
+        };
         // 주소 나누기(우편번호/기본주소/상세주소)
         splitAddress(info.institution_address);
     } catch (err) {
@@ -29,8 +36,10 @@ function makeFinalAddress() {
 // 기관정보 수정 API
 const save = async () => {
     try {
+        const insNo = userStore.institution;
+
         const dataToSave = {
-            institution_no: institution.value.institution_no, // PK
+            institution_no: insNo, // PK
             name: institution.value.name,
             business_number: institution.value.business_number,
             tel: institution.value.tel,

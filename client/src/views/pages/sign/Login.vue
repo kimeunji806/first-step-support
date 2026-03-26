@@ -1,42 +1,41 @@
 <script setup>
-import FloatingConfigurator from '@/components/FloatingConfigurator.vue'
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { useUserStore } from '@/stores/user'
+import FloatingConfigurator from '@/components/FloatingConfigurator.vue';
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { useUserStore } from '@/stores/user';
 
 const router = useRouter();
 
-const userId = ref('')
-const userPassword = ref('')
+const userId = ref('');
+const userPassword = ref('');
 
 const userLogin = async () => {
     let result = await fetch(`/api/login`, {
-        method: "post",
+        method: 'post',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
             user_id: userId.value,
             user_pw: userPassword.value
-        }),
+        })
     })
-    .then((resp) => resp.json())
-    .catch((err) => console.log(err))
+        .then((resp) => resp.json())
+        .catch((err) => console.log(err));
 
     if (result && result.user_no) {
-        const user = result
+        const user = result;
 
-        const userStore = useUserStore()
-        userStore.setUser(user)
+        const userStore = useUserStore();
+        userStore.setUser(user);
 
         if (user.approval === 0) {
-            router.push('/sign/access') // 승인 대기
+            router.push('/sign/access'); // 승인 대기
         } else {
-            router.push('/auth/approval') // 나중에 승인시 갈 페이지
+            router.push('/auth/approval'); // 나중에 승인시 갈 페이지
         }
     } else {
-        alert("아이디 또는 비밀번호 틀림")
+        alert('아이디 또는 비밀번호 틀림');
     }
-}
-
+};
 </script>
 
 <template>
@@ -68,17 +67,17 @@ const userLogin = async () => {
 
                     <div>
                         <label for="email1" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">아이디</label>
-                        <InputText id="email1" type="text"  class="w-full md:w-[30rem] mb-8" v-model="userId" />
+                        <InputText id="email1" type="text" class="w-full md:w-[30rem] mb-8" v-model="userId" />
 
                         <label for="password1" class="block text-surface-900 dark:text-surface-0 font-medium text-xl mb-2">비밀번호</label>
-                        <Password id="password1" v-model="userPassword"  :toggleMask="true" class="mb-4" fluid :feedback="false"></Password>
+                        <Password id="password1" v-model="userPassword" :toggleMask="true" class="mb-4" fluid :feedback="false"></Password>
 
                         <div class="flex items-center justify-between mt-2 mb-8 gap-8">
-                            <span class="font-medium no-underline ml-2 text-right cursor-pointer text-primary ">아이디 찾기</span>
-                            <span class="font-medium no-underline ml-2 text-right cursor-pointer text-primary ">비밀번호 찾기</span>
+                            <span class="font-medium no-underline ml-2 text-right cursor-pointer text-primary">아이디 찾기</span>
+                            <span class="font-medium no-underline ml-2 text-right cursor-pointer text-primary">비밀번호 찾기</span>
                         </div>
                         <Button label="로그인" class="w-full" @click="userLogin"></Button>
-                        <Button  label="회원가입" class="w-full mt-2" as="router-link" to="/sign/register"></Button>
+                        <Button label="회원가입" class="w-full mt-2" as="router-link" to="/sign/register"></Button>
                     </div>
                 </div>
             </div>

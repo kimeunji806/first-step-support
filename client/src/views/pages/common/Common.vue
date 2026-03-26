@@ -17,8 +17,13 @@ const dropdownValues = [
     { name: '지원계획', code: 'C', component: planForm },
     { name: '지원결과', code: 'D', component: resultForm }
 ];
-
+// 셀렉트에서 선택한 값
 const dropdownValue = shallowRef(null);
+//확인버튼으로 불러오게 했음
+const selectedForm = shallowRef(null);
+const confirmForm = () => {
+    selectedForm.value = dropdownValue.value;
+};
 
 import { useRoute } from 'vue-router';
 const route = useRoute();
@@ -26,6 +31,7 @@ const selectNo = Number(route.params.no);
 
 const user = ref([]);
 console.log(selectNo);
+
 
 onBeforeMount(async () => {
     await fetch(`/api/beneficiaries/${selectNo}`)
@@ -38,29 +44,30 @@ onBeforeMount(async () => {
             }
 
             user.value = data;
+            targetInfo.value.manager_no = data[0].manager_no;
+            targetInfo.value.sub_manager_no = data[0].sub_manager_no;
+            institutionNo.value = data[0].institution_no;
+
+            console.log('Common user:', user.value);
+            console.log('Common survey_no:', user.value[0]?.survey_no);
         })
         .catch((err) => console.log(err));
 });
 
 // 임시 데이터
 // 나중에는 선택된 대상자/조사지 상세 조회값으로 교체
+const user = ref({});
 const targetInfo = ref({
-    // beneficiaries_name: user.beneficiaries_name,
-    // guardian_name: user.guardian_name,
-    // priority_name: '홍길동',
-    // gender: '야',
-    // birth: '2001.01.01',
-    // disability_type: 'ㅡㅡ',
     manager_no: null,
     sub_manager_no: null
-    // survey_no: 1001,
-    // beneficiaries_no: '1'
 });
+const institutionNo = ref(null);
 
 // 담당자와 부담당자가 둘 다 있어야 "지정 완료"
 const isAssigned = computed(() => {
-    return !!targetInfo.value.manager_no && !!targetInfo.value.sub_manager_no;
+    return !!targetInfo.value.manager_no;
 });
+
 const handleAssigned = (data) => {
     targetInfo.value.manager_no = data.manager_no;
     targetInfo.value.sub_manager_no = data.sub_manager_no;
@@ -95,7 +102,7 @@ const handleAssigned = (data) => {
                             <div class="w-full rounded-md p-4">장애유형</div>
                             <div class="w-full rounded-md p-4">{{ user[0].disability_type }}</div>
                         </div>
-                    </div>
+                    </div> 
                 </div>
 
                 <br />
@@ -120,15 +127,15 @@ const handleAssigned = (data) => {
                 <!-- 담당자 미지정 -->
                 <div v-if="!isAssigned">
                     <div class="font-semibold text-xl mb-4">담당자 지정</div>
-                    <ManagerAssignForm v-if="!isAssigned" :survey-no="selectNo" :institution-no="1" @assigned="handleAssigned" />
+                    <ManagerAssignForm v-if="!isAssigned" :survey-no="selectNo" :institution-no="institutionNo" @assigned="handleAssigned" />
                     <!-- 조사지 번호 땜에 좀 바꿨어요! -->
                 </div>
 
                 <!-- 담당자 지정 완료 -->
                 <div v-else>
                     <Select v-model="dropdownValue" :options="dropdownValues" optionLabel="name" placeholder="폼 선택하기" />
-                    <Button label="확인" />
-                    <component :is="dropdownValue?.component" />
+                    <Button label="확인" @click="confirmForm" />
+                    <component :is="selectedForm?.component" :survey-no="user[0]?.survey_no" />
                 </div>
             </div>
         </div>

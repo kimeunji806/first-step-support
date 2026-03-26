@@ -2,15 +2,14 @@ const { pool } = require("../DAO");
 
 // 기관정보 조회
 const selectAllInstitution = `
-SELECT institution_no,
-       name,
+SELECT name,
        tel,
        institution_address,
        institution_email,
        business_number,
        operation
 FROM institution
-ORDER BY institution_no
+WHERE institution_no = ?
 `;
 
 // 기관정보 수정

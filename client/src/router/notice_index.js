@@ -2,26 +2,41 @@ export default [
     {
         path: '/notice',
         name: 'notice',
-        component: () => import('@/views/pages/notice/notice.vue')
+        component: () => import('@/views/pages/notice/NoticeList.vue'),
+        meta: {
+            roles: ['e1', 'e2', 'e3', 'e4']
+        }
     },
     {
-        path: '/notice/info',
+        path: '/notice/info/:noticeNo',
         name: 'notice_info',
-        component: () => import('@/views/pages/notice/NoticeInfo.vue')
+        component: () => import('@/views/pages/notice/NoticeInfo.vue'),
+        meta: {
+            roles: ['e1', 'e2', 'e3', 'e4']
+        }
     },
     {
         path: '/notice/add',
         name: 'notice_add',
-        component: () => import('@/views/pages/notice/noticeAdd.vue')
+        component: () => import('@/views/pages/notice/NoticeAdd.vue'),
+        meta: {
+            roles: ['e2', 'e3', 'e4']
+        }
     },
     {
-        path: '/notice/edit',
+        path: '/notice/edit/:noticeNo',
         name: 'notice_edit',
-        component: () => import('@/views/pages/notice/NoticeEdit.vue')
+        component: () => import('@/views/pages/notice/NoticeEdit.vue'),
+        meta: {
+            roles: ['e2', 'e3', 'e4']
+        }
     },
     {
-        path: '/notice/del',
+        path: '/notice/del/:noticeNo',
         name: 'notice_del',
-        component: () => import('@/views/pages/notice/NoticeDel.vue')
+        component: () => import('@/views/pages/notice/NoticeDel.vue'),
+        meta: {
+            roles: ['e2', 'e3', 'e4']
+        }
     }
 ];

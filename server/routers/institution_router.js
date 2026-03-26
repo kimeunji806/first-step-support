@@ -5,8 +5,13 @@ const institutionService = require("../services/institution_service");
 
 // 기관정보 조회
 router.get("/admin/institutioninfo", async (req, res) => {
-  let result = await institutionService.findAll();
-  res.json(result || {});
+  try {
+    let institutionNo = req.query.institution_no;
+    let result = await institutionService.findAll(institutionNo);
+    res.json(result || {});
+  } catch (err) {
+    console.log(err);
+  }
 });
 
 // 기관정보 수정

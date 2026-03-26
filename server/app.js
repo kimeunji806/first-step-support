@@ -6,6 +6,8 @@ const nodemailer = require("./nodemailer");
 app.use(cors());
 const port = 3000;
 const codeStore = require("./codeStore");
+
+
 // 미들웨어 등록 영역
 // body parser
 // content-type : application/x-www-form-urlencoded
@@ -70,6 +72,8 @@ app.post("/verify", (req, res) => {
   }
 });
 
+
+
 // 기능별 라우터 모듈 등록
 const userRouter = require("./routers/user_router.js");
 app.use("/", userRouter);
@@ -85,9 +89,14 @@ const counselRouter = require("./routers/counsel_router");
 app.use("/", counselRouter);
 const managerAssignRouter = require("./routers/manager_assign_router"); // 기관담당자 지정
 app.use("/managerAssign", managerAssignRouter);
-
+const noticeRouter = require("./routers/notice_router.js"); // 공지사항
+app.use("/", noticeRouter);
+const adminMyPageRouter = require("./routers/admin_mypage_router"); //마이페이지 기관관리자
+app.use("/admin/mypage", adminMyPageRouter);
 const listRouter = require("./routers/list_router");
 app.use("/", listRouter);
 
 const surveyRouter = require("./routers/survey_router");
 app.use("/", surveyRouter);
+const planRouter = require("./routers/plan_router"); // 지원계획
+app.use("/plan", planRouter);
