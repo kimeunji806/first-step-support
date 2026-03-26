@@ -88,3 +88,6 @@ app.use("/managerAssign", managerAssignRouter);
 
 const listRouter = require("./routers/list_router");
 app.use("/", listRouter);
+
+const surveyRouter = require("./routers/survey_router");
+app.use("/", surveyRouter);
