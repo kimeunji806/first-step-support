@@ -18,7 +18,6 @@ onBeforeMount(async () => {
         })
         .catch((err) => console.log(err));
 });
-
 const goToDetail = (surveyNo) => {
     router.push(`/common/${surveyNo}`);
 };
