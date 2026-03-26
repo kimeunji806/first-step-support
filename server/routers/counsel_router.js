@@ -13,11 +13,10 @@ router.get("/counsel/:no", async (req, res) => {
 
 
 router.post("/counselUpload", upload.array('file'), async (req, res) => {
-  let {selectNo , beneNo, userNo,title, content , date,  files } = req.body;
-  console.log({ date, title, content });
-  console.log(surNo);
-  console.log(files);
-  let result = await counselService.counselInsertService(selectNo , beneNo, userNo,title, content , date,  files);
+  let { surNo, beneNo, userNo, title, content, date, files } = req.body;
+  let file = req.files;
+  console.log(file)
+  let result = await counselService.counselInsertService(surNo , beneNo, userNo,title, content , date,  file);
   res.send(result);
 });
 

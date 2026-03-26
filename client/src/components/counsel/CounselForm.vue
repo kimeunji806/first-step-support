@@ -1,8 +1,15 @@
 <script setup>
-import { reactive } from 'vue'
+import { reactive ,onBeforeMount} from 'vue'
 import { useUserStore } from '@/stores/user'
+import { useBeneStore } from '@/stores/surBene'
+import { useRoute } from 'vue-router';
+
+
 const userStore = useUserStore()
+const userbeneStore = useBeneStore();
+const route = useRoute();
 const userNo = userStore.user_no;
+const selectNo = Number(route.params.no);
 
 const form = reactive({
   date: '',
@@ -16,10 +23,18 @@ const handleFile = (e) => {
 }
 
 const submit = async () => {
+  const beneNo = userbeneStore.beneficiaries_no;
+  const surNo = userbeneStore.survey_no;
+
   const formData = new FormData()
+
   formData.append('date', form.date)
   formData.append('title', form.title)
   formData.append('content', form.content)
+  formData.append('surNo', surNo)
+  formData.append('beneNo', beneNo)
+  formData.append('userNo', userNo)
+  
 
   if (form.file.length > 0) {
     for (let i = 0; i < form.file.length; i++) {
@@ -30,11 +45,7 @@ const submit = async () => {
   try {
     await fetch(`/api/counselUpload`, {
       method: 'POST',
-      body: JSON.stringify({
-        selectNo, //신청서 번호
-        beneNo, // 지원대상자 번호
-        userNo
-      }),formData
+      body: formData
     })
 
     alert('저장 완료')
@@ -43,6 +54,11 @@ const submit = async () => {
     alert('에러 발생')
   }
 }
+
+
+onBeforeMount(() => {
+  userbeneStore.fetchUsers(selectNo);
+})
 
 </script>
 

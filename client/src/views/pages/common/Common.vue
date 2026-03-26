@@ -1,9 +1,5 @@
 <script setup>
-<<<<<<< HEAD
-import { ref, computed, shallowRef } from 'vue';
-=======
 import { ref, computed, shallowRef, onBeforeMount } from 'vue';
->>>>>>> e17d5661cadbc09e84137a6ab539f8ab62aed893
 import { RouterLink, RouterView } from 'vue-router';
 
 import counselForm from '@/components/counsel/CounselForm.vue';
@@ -17,14 +13,12 @@ import ManagerAssignForm from '@/components/common/ManagerAssignForm.vue';
 // 오른쪽에서 담당자 지정 완료 후 사용할 셀렉 목록
 const dropdownValues = [
     { name: '상담기록', code: 'A', component: counselForm },
-    { name: '우선순위', code: 'B', component: priorityForm},
+    { name: '우선순위', code: 'B', component: priorityForm },
     { name: '지원계획', code: 'C', component: planForm },
     { name: '지원결과', code: 'D', component: resultForm }
 ];
 
 const dropdownValue = shallowRef(null);
-<<<<<<< HEAD
-=======
 
 import { useRoute } from 'vue-router';
 const route = useRoute();
@@ -32,6 +26,7 @@ const selectNo = Number(route.params.no);
 
 const user = ref([]);
 console.log(selectNo);
+
 
 onBeforeMount(async () => {
     await fetch(`/api/beneficiaries/${selectNo}`)
@@ -47,23 +42,10 @@ onBeforeMount(async () => {
         })
         .catch((err) => console.log(err));
 });
->>>>>>> e17d5661cadbc09e84137a6ab539f8ab62aed893
 
 // 임시 데이터
 // 나중에는 선택된 대상자/조사지 상세 조회값으로 교체
 const targetInfo = ref({
-<<<<<<< HEAD
-    beneficiaries_name: '홍길동',
-    guardian_name: '홍동길',
-    priority_name: '긴급',
-    gender_name: '남',
-    birth: '2001.01.01',
-    disability_type: '발달장애',
-    manager_no: 3007,
-    sub_manager_no: 3007,
-    survey_no: 1001,
-    beneficiaries_no: 5
-=======
     // beneficiaries_name: user.beneficiaries_name,
     // guardian_name: user.guardian_name,
     // priority_name: '홍길동',
@@ -74,7 +56,6 @@ const targetInfo = ref({
     sub_manager_no: null
     // survey_no: 1001,
     // beneficiaries_no: '1'
->>>>>>> e17d5661cadbc09e84137a6ab539f8ab62aed893
 });
 
 // 담당자와 부담당자가 둘 다 있어야 "지정 완료"
@@ -115,7 +96,7 @@ const handleAssigned = (data) => {
                             <div class="w-full rounded-md p-4">장애유형</div>
                             <div class="w-full rounded-md p-4">{{ user[0].disability_type }}</div>
                         </div>
-                    </div>
+                    </div> 
                 </div>
 
                 <br />

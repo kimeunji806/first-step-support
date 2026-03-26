@@ -6,8 +6,8 @@ const counselInfoService = async (surNo) => {
   return list;
 };
 
-const counselInsertService = async (selectNo , beneNo, userNo,title, content , date,  files) => {
-  let list = await counselMapper.counselInsert(selectNo , beneNo, userNo,title, content , date,  files);
+const counselInsertService = async (surNo , beneNo, userNo,title, content , date,  file) => {
+  let list = await counselMapper.counselInsert(surNo , beneNo, userNo,title, content , date,  file);
   return list;
 };
 

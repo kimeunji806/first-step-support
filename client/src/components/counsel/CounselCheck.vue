@@ -1,9 +1,13 @@
 <script setup>
-import { ref , onBeforeMount } from 'vue';
+import { ref, onBeforeMount } from 'vue';
 import { useUserStore } from '@/stores/user'
+import { useBeneStore } from '@/stores/surBene'
+
+const userStore = useUserStore()
+const userbeneStore = useBeneStore();
+const userNo = userStore.user_no;
 
 const list = ref([]);
-
 
 const counsel = async () => {
     await fetch(`/api/counsel/${2}`)
@@ -17,9 +21,9 @@ const counsel = async () => {
 
 
 
-
 onBeforeMount(() => {
-    counsel();
+  counsel();
+  userbeneStore.fetchUsers(userNo);
 })
 
 
