@@ -2,12 +2,16 @@ const { pool } = require("../DAO");
 const institutionSql = require("../sql/institutions.js");
 
 // 기관정보 조회
-const selectAllInstitution = async () => {
+const selectAllInstitution = async (institutionNo) => {
   let conn = null;
   try {
     conn = await pool.getConnection();
-    let [rows] = await conn.execute(institutionSql.selectAllInstitution);
-    return rows;
+
+    let [rows] = await conn.execute(institutionSql.selectAllInstitution, [
+      institutionNo,
+    ]);
+
+    return rows || {};
   } catch (err) {
     console.log(err);
   } finally {

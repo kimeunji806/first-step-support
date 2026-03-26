@@ -1,9 +1,9 @@
 const institutionMapper = require("../database/mappers/institution_mapper.js");
 
 // 기관정보 조회
-const findAll = async () => {
-  let info = await institutionMapper.selectAllInstitution();
-  return info;
+const findAll = async (institutionNo) => {
+  let info = await institutionMapper.selectAllInstitution(institutionNo);
+  return info || {};
 };
 
 // 기관정보 수정

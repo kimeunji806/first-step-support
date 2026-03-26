@@ -62,6 +62,14 @@ router.beforeEach((to, from, next) => {
         // 이 루트가 회원가입으로 되어있음 나중에 페이지 만들면 경로 수정
     }
 
+    // 롤별 페이지 접근 제한
+    const requiredRoles = to.matched.find((record) => record.meta.roles)?.meta.roles;
+
+    if (requiredRoles && !requiredRoles.includes(userStore.role)) {
+        alert('접근 권한이 없습니다.');
+        return next('/');
+    }
+
     next();
 });
 
