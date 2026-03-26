@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onBeforeMount } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import AdminMyInfo from './AdminMyInfo.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -8,7 +9,6 @@ const router = useRouter();
 const institution = ref(null);
 const activeTab = ref(route.query.tab || '0');
 
-// 기관정보 조회
 const findAllInfo = async () => {
     try {
         const res = await fetch(`/api/admin/institutioninfo`);
@@ -19,11 +19,10 @@ const findAllInfo = async () => {
     }
 };
 
-// 기관정보 수정 탭으로 이동
 const goToEditForm = () => {
     router.push({
         path: '/admin/institutioninfo/edit',
-        query: { tab: '1' } // 기관정보 탭을 활성화하기 위한 파라미터
+        query: { tab: '1' }
     });
 };
 
@@ -31,6 +30,7 @@ onBeforeMount(() => {
     findAllInfo();
 });
 </script>
+
 <template>
     <div class="w-full">
         <div class="w-full">
@@ -42,7 +42,11 @@ onBeforeMount(() => {
                     </TabList>
                 </Tabs>
 
-                <div v-if="activeTab === '1' && institution" class="mt-4">
+                <div v-if="activeTab === '0'" class="mt-4">
+                    <AdminMyInfo />
+                </div>
+
+                <div v-else-if="activeTab === '1' && institution" class="mt-4">
                     <div class="font-semibold text-xl mb-4">기관정보</div>
                     <DataTable
                         :value="[
@@ -57,13 +61,13 @@ onBeforeMount(() => {
                         <Column field="label" header="" class="w-3xs"></Column>
                         <Column field="value" header=""></Column>
                     </DataTable>
+
+                    <div class="flex justify-end mt-4">
+                        <Button label="수정" @click="goToEditForm"></Button>
+                    </div>
                 </div>
 
                 <div v-else-if="activeTab === '1'" class="mt-4">로딩중...</div>
-
-                <div class="flex justify-end mt-4">
-                    <Button label="수정" @click="goToEditForm"></Button>
-                </div>
             </div>
         </div>
     </div>
