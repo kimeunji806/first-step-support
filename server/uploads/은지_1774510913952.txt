@@ -1,0 +1,64 @@
+CREATE TABLE `notice_history` (
+   `notice_history_no`   int   NOT NULL,
+   `notice_no`   int   NOT NULL,
+   `history_title`   varchar   NOT NULL,
+   `history_writer`   varchar   NOT NULL,
+   `history_content`   varchar   NOT NULL,
+   `created_at`   datetime   NOT NULL   DEFAULT sysdate,
+   `notice_no2`   int   NOT NULL
+);
+
+CREATE TABLE `counsel_history` (
+   `counsel_history_no`   int   NOT NULL,
+   `counsel_no`   int   NULL,
+   `history_title`   varchar   NOT NULL,
+   `history_writer`   varchar   NOT NULL,
+   `history_content`   varchar   NOT NULL,
+   `created_at`   datetime   NOT NULL   DEFAULT sysdate,
+   `counsel_no2`   int   NOT NULL
+);
+
+CREATE TABLE `priority` (
+   `priority_id`   varchar2   NOT NULL,
+   `survey_no`   int   NOT NULL,
+   `approver`   varchar   NULL,
+   `approval`   varchar   NOT NULL   DEFAULT 0,
+   `approval_date`   datetime   NULL,
+   `writer_no`   varchar   NOT NULL,
+   `reason_rejection`   varchar   NULL
+);
+
+CREATE TABLE `user` (
+   `user_no`   int   NOT NULL,
+   `institution_no`   int   NOT NULL,
+   `role`   varchar   NOT NULL,
+   `user_id`   varchar   NOT NULL,
+   `user_pw`   VARCHAR   NULL,
+   `user_name`   varchar   NOT NULL,
+   `address`   varchar   NOT NULL,
+   `email`   varchar   NOT NULL,
+   `tel`   varchar   NULL,
+   `approval`   varchar   NOT NULL   DEFAULT 0,
+   `created_at`   datetime   NOT NULL   DEFAULT sysdate
+);
+
+CREATE TABLE `support_history` (
+   `support_history_no`   int   NOT NULL,
+   `support_plan_no2`   int   NOT NULL,
+   `support_plan_no`   int   NULL,
+   `history_title`   varchar   NOT NULL,
+   `history_content`   varchar   NOT NULL,
+   `history_writer`   varchar   NOT NULL,
+   `approval`   int   NOT NULL,
+   `created_at`   datetime   NOT NULL   DEFAULT sysdate
+);
+
+CREATE TABLE `counsel_record` (
+   `record_no`   int   NOT NULL,
+   `beneficiaries_no`   int   NOT NULL,
+   `writer_no`   varchar   NOT NULL,
+   `record_title`   varchar   NOT NULL,
+   `record_content`   varchar   NOT NULL,
+   `created_at`   datetime   NOT NULL   DEFAULT sysdate,
+   `record_counsel_date`   datetime   NOT NULL
+);

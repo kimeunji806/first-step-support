@@ -56,7 +56,6 @@ onBeforeMount(async () => {
 
 // 임시 데이터
 // 나중에는 선택된 대상자/조사지 상세 조회값으로 교체
-const user = ref({});
 const targetInfo = ref({
     manager_no: null,
     sub_manager_no: null
