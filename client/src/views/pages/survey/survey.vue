@@ -14,8 +14,10 @@ const subList = async (mainNo) => {
         .catch((err) => console.log(err));
 };
 
-const questionList = async () => {
-    await fetch(`/api/question/${questionNo}`)
+const questionList = async (subNo) => {
+    console.log(subNo);
+
+    await fetch(`/api/question/${subNo}`)
         .then((resp) => resp.json())
         .then((data) => {
             question.value = data;
@@ -34,6 +36,7 @@ onBeforeMount(async () => {
 
 const main_isVisible = ref(false);
 const sub_isVisible = ref(false);
+const question_isVisible = ref(false);
 </script>
 
 <template>
@@ -55,9 +58,9 @@ const sub_isVisible = ref(false);
         </div>
         <div class="md:w-1/5 h-full">
             <div class="card h-full flex flex-col gap-4">
-                <div class="font-semibold text-xl mb-4">지원서 항목</div>
+                <div class="font-semibold text-xl mb-4">세부 항목</div>
                 <ul class="overflow-y-auto" v-for="value in sub">
-                    <li class="font-semibold text-l mb-4">{{ value.sub_title }}</li>
+                    <li class="font-semibold text-l mb-4" v-on:click="questionList(value.sub_no)">{{ value.sub_title }}</li>
                 </ul>
                 <div v-if="sub_isVisible">
                     <InputText type="text" id="myInput" placeholder="지원서 항목 추가" class="w-full md:w-[13rem]" v-model="content" />
@@ -70,79 +73,40 @@ const sub_isVisible = ref(false);
         </div>
         <div class="md:w-3/5 h-full">
             <div class="card h-full flex flex-col gap-4">
-                <div class="font-semibold text-xl mb-4">지원서 항목</div>
+                <div class="font-semibold text-xl mb-4">질문 항목</div>
                 <div class="font-semibold text-xl mb-4">지원신청내역</div>
-                <DataTable :value="question" :paginator="true" :rows="5" dataKey="id" :rowHover="true" showGridlines>
+                <!-- <DataTable :value="question" :paginator="true" :rows="5" dataKey="id" :rowHover="true" showGridlines> -->
+                <DataTable :value="question" scrollable scrollHeight="500px" dataKey="id" :rowHover="true" showGridlines>
                     <!-- 못찾았을떄 -->
                     <template #empty> No customers found. </template>
 
-                    <Column header="지원자명" style="min-width: 8rem">
+                    <Column header="삭제" style="min-width: 1rem">
                         <template #body="{ data }">
                             <div class="flex items-center gap-2">
-                                <span>{{ data.beneficiaries_name }}</span>
+                                <Checkbox id="checkOption1" name="option" value="Chicago" v-model="checkboxValue" />
                             </div>
                         </template>
                     </Column>
-                    <Column header="보호자명" style="min-width: 8rem">
+                    <Column header="질문" style="min-width: 40rem">
                         <template #body="{ data }">
-                            {{ data.guardian_name }}
+                            {{ data.question_text }}
                         </template>
                     </Column>
-                    <Column header="지원신청일" style="min-width: 10rem">
+                    <Column header="수정" style="min-width: 1rem">
                         <template #body="{ data }">
                             <div class="flex items-center gap-2">
-                                <span>{{ data.created_at }}</span>
-                            </div>
-                        </template>
-                    </Column>
-                    <Column header="지원신청서" style="min-width: 8rem">
-                        <template #body="{ data }">
-                            <Button type="submit" label="보기" v-on:click="goToDetail(data.survey_no)" />
-                        </template>
-                    </Column>
-                    <Column header="담당자" style="min-width: 8rem">
-                        <template #body="{ data }">
-                            <div class="flex items-center gap-2">
-                                <span>{{ data.manager_name }}</span>
-                            </div>
-                        </template>
-                    </Column>
-                    <Column header="상담내역" style="min-width: 8rem">
-                        <template #body="{ data }">
-                            <Button type="submit" label="보기" v-on:click="goToDetail(data.survey_no)" />
-                        </template>
-                    </Column>
-                    <Column header="우선순위" style="min-width: 8rem">
-                        <template #body="{ data }">
-                            <div class="flex items-center gap-2">
-                                <span>{{ data.priority_id }}</span>
-                            </div>
-                        </template>
-                    </Column>
-                    <Column header="계획/결과 진행" style="min-width: 8rem">
-                        <template #body="{ data }">
-                            <div class="flex items-center gap-2">
-                                <span>NULL</span>
-                            </div>
-                        </template>
-                    </Column>
-                    <Column header="지원계획" style="min-width: 8rem">
-                        <template #body="{ data }">
-                            <div class="flex items-center gap-2">
-                                <Button type="submit" label="보기" v-on:click="goToDetail(data.survey_no)" />
-                            </div>
-                        </template>
-                    </Column>
-                    <Column header="지원결과" style="min-width: 8rem">
-                        <template #body="{ data }">
-                            <div class="flex items-center gap-2">
-                                <Button type="submit" label="보기" v-on:click="goToDetail(data.survey_no)" />
+                                <span><Button type="submit" label="수정" v-on:click="" /></span>
                             </div>
                         </template>
                     </Column>
                 </DataTable>
+                <div v-if="question_isVisible">
+                    <InputText type="text" id="myInput" placeholder="지원서 항목 추가" class="w-full md:w-[56rem]" v-model="content" />
+
+                    <Button type="submit" label="저장" @click="question_isVisible = !question_isVisible" />
+                </div>
                 <div class="flex justify-end">
-                    <Button type="submit" label="항목저장" class="w-24" v-on:click="" />
+                    <div class="mt-auto" v-if="!question_isVisible"><Button type="submit" label="항목추가" class="w-full" @click="question_isVisible = !question_isVisible"></Button></div>
                 </div>
 
                 <div class="mt-auto flex justify-end gap-2">

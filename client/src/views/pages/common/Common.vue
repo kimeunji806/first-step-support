@@ -32,7 +32,6 @@ const selectNo = Number(route.params.no);
 const user = ref([]);
 console.log(selectNo);
 
-
 onBeforeMount(async () => {
     await fetch(`/api/beneficiaries/${selectNo}`)
         .then((resp) => resp.json())
@@ -56,7 +55,6 @@ onBeforeMount(async () => {
 
 // 임시 데이터
 // 나중에는 선택된 대상자/조사지 상세 조회값으로 교체
-const user = ref({});
 const targetInfo = ref({
     manager_no: null,
     sub_manager_no: null
@@ -102,7 +100,7 @@ const handleAssigned = (data) => {
                             <div class="w-full rounded-md p-4">장애유형</div>
                             <div class="w-full rounded-md p-4">{{ user[0].disability_type }}</div>
                         </div>
-                    </div> 
+                    </div>
                 </div>
 
                 <br />
