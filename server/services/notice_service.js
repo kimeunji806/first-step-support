@@ -2,14 +2,15 @@ const noticeMapper = require("../database/mappers/notice.mapper");
 
 // 공지사항 조회
 const findAll = async (institutionNo) => {
-  let list = await noticeMapper.selectAllNotice(institutionNo);
+  const list = await noticeMapper.selectAllNotice(institutionNo);
   return list || [];
 };
 
 // 공지사항 상세조회
 const findInfoByNo = async (noticeNo) => {
-  let info = await noticeMapper.selectNoticeByNo(noticeNo);
-  return info;
+  const notice = await noticeMapper.selectNoticeByNo(noticeNo);
+  const files = await noticeMapper.selectFilesByNoticeNo(noticeNo);
+  return { ...notice, files };
 };
 
 // 공지사항 등록(재확인 필요)

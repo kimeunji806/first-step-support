@@ -20,9 +20,22 @@ const selectNoticeByNo = async (no) => {
   let conn = null;
   try {
     conn = await pool.getConnection();
-    let result = await conn.query(noticeSql.selectNoticeByNo, no);
-    let info = result[0];
-    return info;
+    const rows = await conn.query(noticeSql.selectNoticeByNo, [no]);
+    return rows && rows.length > 0 ? rows[0] : null;
+  } catch (err) {
+    console.log(err);
+  } finally {
+    if (conn) conn.release();
+  }
+};
+
+// 공지사항 첨부파일 조회
+const selectFilesByNoticeNo = async (no) => {
+  let conn = null;
+  try {
+    conn = await pool.getConnection();
+    const rows = await conn.query(noticeSql.selectFilesByNoticeNo, [no]);
+    return rows || [];
   } catch (err) {
     console.log(err);
   } finally {
@@ -89,4 +102,5 @@ module.exports = {
   selectNoticeByNo,
   insertNotice,
   deleteNotice,
+  selectFilesByNoticeNo,
 };
