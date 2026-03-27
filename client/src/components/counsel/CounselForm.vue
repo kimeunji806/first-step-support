@@ -47,8 +47,9 @@ const submit = async () => {
       method: 'POST',
       body: formData
     })
+    userbeneStore.refreshCounsel = !userbeneStore.refreshCounsel
+    alert('등록 완료')
 
-    alert('저장 완료')
   } catch (err) {
     console.error(err)
     alert('에러 발생')
@@ -56,14 +57,14 @@ const submit = async () => {
 }
 
 
-onBeforeMount(() => {
-  userbeneStore.fetchUsers(selectNo);
+onBeforeMount(async() => {
+  await userbeneStore.fetchUsers(selectNo);
 })
 
 </script>
 
 <template>
-  <div class="p-6 bg-slate-100 min-h-screen">
+  <div class="p-6 bg-slate-100 min-h-full">
     <div class="max-w-2xl mx-auto bg-white p-6 rounded-xl shadow">
 
       <h2 class="text-lg font-bold mb-4 border-b pb-2">상담기록 입력</h2>
@@ -94,7 +95,7 @@ onBeforeMount(() => {
       <div class="text-right">
         <button @click="submit"
           class="bg-green-400 hover:bg-green-500 text-white px-6 py-2 rounded-full">
-          저장
+          등록
         </button>
       </div>
 
