@@ -119,4 +119,3 @@ onBeforeMount(async() => {
   </div>
 </div>
 </template>
-
