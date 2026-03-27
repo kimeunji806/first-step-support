@@ -27,13 +27,13 @@ const createUser = async (userObj) => {
     address,
     institution,
   ];
-  // let result = await userMapper.insertUser(insertData);
+  let result = await userMapper.insertUser(insertData);
 
   // let resObj = {
   //   status: result.insertId > 0 ? "success" : "fail",
   //   user_no: result.insertId,
   // };
-  // return resObj;
+  return result;
 };
 
 const loginService = async (id,pw) =>{

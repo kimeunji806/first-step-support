@@ -96,7 +96,7 @@ const addUserInfo = async () => {
         headers: {
             'content-type': 'application/json'
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify( data )
     })
         .then((res) => res.json())
         .catch((err) => console.log(err));
