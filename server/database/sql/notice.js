@@ -40,13 +40,14 @@ WHERE notice_no = ?
 // 공지사항 등록
 const insertNotice = `
 INSERT INTO notice (
+notice_no,
 user_no,
 institution_no,
 notice_title,
 notice_content,
 created_at
 )
-VALUES(?,?,?,?, NOW())
+VALUES(?,?,?,?,?, NOW())
 `;
 
 // 첨부파일 등록

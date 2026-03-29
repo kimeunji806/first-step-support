@@ -81,6 +81,19 @@ const goToDelForm = async () => {
     }
 };
 
+// 첨부파일 다운로드
+const downloadFile = (fileNo) => {
+    const downloadUrl = `/api/notice/file/${fileNo}`;
+
+    // 새창 없이 바로 다운로드
+ const link = document.createElement('a');
+    link.href = downloadUrl;
+    link.setAttribute('download', '');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
 onBeforeMount(() => {
     findNoticeByNo();
 });
@@ -114,12 +127,10 @@ onBeforeMount(() => {
                 <div class="text-sm text-gray-500 mb-2">첨부파일</div>
 
                 <div v-if="notice.files.length > 0" class="space-y-2">
-                    <div v-for="file in notice.files" :key="file.file_no" class="border rounded px-3 py-2 text-sm">
+                    <div v-for="file in notice.files" :key="file.file_no" class="border rounded px-3 py-2 text-sm cursor-pointer" @click="downloadFile(file.file_no)">
                         {{ file.file_name }}
                     </div>
                 </div>
-
-                <div v-else class="text-sm text-gray-400">첨부파일이 없습니다.</div>
             </div>
             <div class="flex justify-end gap-2 mt-6">
                 <Button label="목록" @click="goToList" />

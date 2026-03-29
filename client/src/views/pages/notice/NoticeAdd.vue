@@ -26,13 +26,20 @@ const removeFile = (index) => {
 
 // 공지사항 등록
 const createNotice = async () => {
+    console.log('user_no 확인:', userStore.user_no);
+    console.log('institution_no 확인:', userStore.institution);
+
+    if (!userStore.user_no) {
+        alert('로그인 정보가 없습니다.');
+        return;
+    }
     try {
         const formData = new FormData();
 
         formData.append('notice_title', notice.value.notice_title);
         formData.append('notice_content', notice.value.notice_content);
-        formData.append('user_no', userStore.user?.user_no);
-        formData.append('institution_no', userStore.user?.institution_no);
+        formData.append('user_no', userStore.user_no);
+        formData.append('institution_no', userStore.institution);
 
         // 파일 여러 개
         for (let i = 0; i < files.value.length; i++) {
@@ -55,33 +62,24 @@ const createNotice = async () => {
 <template>
     <div class="card border-none bg-transparent p-0">
         <div class="text-xl font-bold mb-4 ml-1">글 등록하기</div>
-
-        <!-- 1. 제목 -->
         <div class="flex mb-3">
             <div class="label-box">제목</div>
             <div class="flex-1">
                 <InputText v-model="notice.notice_title" class="w-full h-full border-round-md" placeholder="제목을 입력하세요" />
             </div>
         </div>
-
-        <!-- 2. 공지내용 -->
         <div class="flex mb-3">
             <div class="label-box">공지내용</div>
             <div class="flex-1">
                 <Textarea v-model="notice.notice_content" rows="10" class="w-full border-round-md block" style="resize: none" placeholder="내용을 입력하세요" />
             </div>
         </div>
-
-        <!-- 3. 첨부파일 -->
         <div class="flex mb-4">
             <div class="label-box">첨부파일</div>
             <div class="flex-1 p-3 border-1 surface-border border-round-md bg-white flex align-items-center">
-                <!-- 파일이 없을 때 -->
                 <div v-if="!files.length">
                     <label for="file-upload" class="p-button p-button-outlined p-button-secondary border-round-md px-4 py-2 cursor-pointer flex align-items-center"> 첨부파일 </label>
                 </div>
-
-                <!-- 파일이 있을 때 -->
                 <div v-else class="flex flex-wrap align-items-center gap-2">
                     <span class="text-sm font-bold text-green-500 mr-2 flex align-items-center"> <i class="pi pi-paperclip mr-1"></i> 총 {{ files.length }}개 파일 </span>
                     <div v-for="(file, index) in files" :key="index" class="flex align-items-center bg-white border-1 surface-border border-round-md px-3 py-2 text-sm shadow-sm">
@@ -94,8 +92,6 @@ const createNotice = async () => {
                 <input id="file-upload" type="file" multiple @change="handleFileChange" style="display: none" />
             </div>
         </div>
-
-        <!-- 등록 버튼 -->
         <div class="flex justify-end mt-3">
             <Button label="글등록" class="p-button-success px-5 py-2 font-bold" @click="createNotice" />
         </div>

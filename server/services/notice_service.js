@@ -17,43 +17,56 @@ const findInfoByNo = async (noticeNo) => {
 // 공지사항 등록
 const createInfo = async (noticeData, files) => {
   let conn = null;
-
   try {
+    console.log("noticeData:", noticeData);
     conn = await pool.getConnection();
     await conn.beginTransaction();
 
     const { user_no, institution_no, notice_title, notice_content } =
       noticeData;
 
-    const [result] = await conn.execute(noticeSql.insertNotice, [
+    // notice_no 생성
+    const [rows] = await conn.query(
+      "SELECT IFNULL(MAX(notice_no), 0) AS maxNo FROM notice",
+    );
+    const notice_no = rows.maxNo + 1;
+
+    // 공지사항 등록 (매퍼 함수 호출)
+    await noticeMapper.insertNotice(conn, {
+      notice_no, // 생성한 번호 전달
       user_no,
       institution_no,
       notice_title,
       notice_content,
-    ]);
-
-    const noticeNo = result.insertId;
+    });
 
     // 첨부파일 등록
     if (files && files.length > 0) {
       for (const file of files) {
-        await conn.execute(noticeSql.insertNoticeFile, [
-          noticeNo,
-          file.originalname,
-          file.path,
-          file.size,
-        ]);
+        // conn.execute 대신 매퍼의 함수를 직접 실행
+        await noticeMapper.insertNoticeFile(conn, {
+          notice_no: notice_no, // 위에서 생성한 번호 사용
+          file_name: file.originalname,
+          file_path: file.path,
+          file_size: file.size,
+        });
       }
     }
 
     await conn.commit();
-    return noticeNo;
+    return notice_no;
   } catch (err) {
     console.log(err);
     if (conn) await conn.rollback();
   } finally {
     if (conn) conn.release();
   }
+};
+
+// 첨부파일 다운로드
+const findFileByNo = async (fileNo) => {
+  const file = await noticeMapper.selectFileByFileNo(fileNo);
+  return file;
 };
 
 // 공지사항 수정(재확인 필요)
@@ -86,4 +99,5 @@ module.exports = {
   createInfo,
   modifyInfo,
   removeInfo,
+  findFileByNo,
 };
