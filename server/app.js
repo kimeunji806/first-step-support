@@ -100,3 +100,6 @@ app.use("/plan", planRouter);
 
 const surveyInputRouter = require("./routers/surveyInput_router");
 app.use("/", surveyInputRouter);
+const fileRouter = require("./routers/file_router");
+app.use("/", fileRouter);
+

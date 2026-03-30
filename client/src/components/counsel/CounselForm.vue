@@ -51,7 +51,21 @@ const submit = async () => {
             alert('에러 발생');
         }
     }
-};
+
+  try {
+    await fetch(`/api/counselUpload`, {
+      method: 'POST',
+      body: formData
+    })
+    userbeneStore.refreshCounsel = !userbeneStore.refreshCounsel
+    alert('등록 완료')
+
+  } catch (err) {
+    console.error(err)
+    alert('에러 발생')
+  }
+}
+
 
 onBeforeMount(async () => {
     await userbeneStore.fetchUsers(selectNo);
