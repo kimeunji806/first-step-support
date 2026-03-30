@@ -2,24 +2,21 @@
 import { reactive, ref } from 'vue';
 
 const priority = ref(null);
-const priorityAlert = ref('');
+const priorityAlert = ref(null);
 const isVisible = ref(false);
 
 const clickPriority = async (role_name) => {
     console.log(role_name);
-    priority.value = role_name;
-    console.log(`우선순위 ${priority.value}`);
+    info.role = role_name;
 
-    if (priority.value === 'd1') {
+    if (priority == 'd1') {
         priorityAlert.value = '계획';
-    } else if (priority.value === 'd2') {
+    } else if (priority == 'd2') {
         priorityAlert.value = '중점';
-    } else if (priority.value === 'd3') {
+    } else if (priority == 'd3') {
         priorityAlert.value = '긴급';
     }
-
-    console.log(priorityAlert.value);
-    return (isVisible.value = !isVisible.value);
+    isVisible = !isVisible;
 };
 </script>
 <template>
@@ -28,9 +25,9 @@ const clickPriority = async (role_name) => {
             <h2 class="text-lg font-bold mb-4 border-b pb-2">우선순위 입력</h2>
 
             <div class="flex items-center justify-between mt-2 mb-8 gap-8">
-                <button label="계획" class="w-40 h-40 rounded-full flex items-center justify-center text-lg font-bold bg-gray-400 text-white" @click="clickPriority('d1')" />
-                <button label="중점" class="w-40 h-40 rounded-full flex items-center justify-center text-lg font-bold bg-green-500 text-white" @click="clickPriority('d2')" />
-                <button label="긴급" class="w-40 h-40 rounded-full flex items-center justify-center text-lg font-bold bg-red-500 text-white" @click="clickPriority('d3')" />
+                <Button label="일반사용자" class="w-40 h-40 rounded-full flex items-center justify-center text-lg font-bold" @click="clickPriority('d1')" />
+                <Button label="일반사용자" class="w-40 h-40 rounded-full flex items-center justify-center text-lg font-bold" @click="clickPriority('d2')" />
+                <Button label="일반사용자" class="w-40 h-40 rounded-full flex items-center justify-center text-lg font-bold" @click="clickPriority('d3')" />
             </div>
             <div v-if="isVisible">
                 <h2 class="text-lg font-bold mb-4 border-b pb-2">우선순위 {{ priorityAlert }}을 선택하셨습니다.</h2>

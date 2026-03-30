@@ -20,9 +20,22 @@ const selectNoticeByNo = async (no) => {
   let conn = null;
   try {
     conn = await pool.getConnection();
-    let result = await conn.query(noticeSql.selectNoticeByNo, no);
-    let info = result[0];
-    return info;
+    const rows = await conn.query(noticeSql.selectNoticeByNo, [no]);
+    return rows && rows.length > 0 ? rows[0] : null;
+  } catch (err) {
+    console.log(err);
+  } finally {
+    if (conn) conn.release();
+  }
+};
+
+// 공지사항 첨부파일 조회
+const selectFilesByNoticeNo = async (no) => {
+  let conn = null;
+  try {
+    conn = await pool.getConnection();
+    const rows = await conn.query(noticeSql.selectFilesByNoticeNo, [no]);
+    return rows || [];
   } catch (err) {
     console.log(err);
   } finally {
@@ -31,12 +44,48 @@ const selectNoticeByNo = async (no) => {
 };
 
 // 공지사항 등록
-const insertNotice = async (noticeInfo) => {
+const insertNotice = async (conn, noticeData) => {
+  const { notice_no, user_no, institution_no, notice_title, notice_content } =
+    noticeData;
+
+  const result = await conn.execute(noticeSql.insertNotice, [
+    notice_no,
+    user_no,
+    institution_no,
+    notice_title,
+    notice_content,
+  ]);
+  return result;
+};
+
+// 첨부파일 등록
+const insertNoticeFile = async (conn, fileData) => {
+  const { notice_no, file_name, file_path, file_size } = fileData;
+
+  const result = await conn.execute(noticeSql.insertNoticeFile, [
+    notice_no,
+    file_name,
+    file_path,
+    file_size,
+  ]);
+
+  return result;
+};
+
+// 첨부파일 다운로드
+const selectFileByFileNo = async (fileNo) => {
   let conn = null;
   try {
     conn = await pool.getConnection();
-    let [result] = await conn.query(noticeSql.insertNotice, noticeInfo);
-    return result;
+
+    const rows = await conn.execute(
+      `SELECT file_no, file_name, file_path 
+       FROM files 
+       WHERE file_no = ?`,
+      [fileNo],
+    );
+
+    return rows[0];
   } catch (err) {
     console.log(err);
   } finally {
@@ -74,7 +123,7 @@ const deleteNotice = async (noticeNo) => {
   let conn = null;
   try {
     conn = await pool.getConnection();
-    let [result] = await conn.query(noticeSql.deleteNotice, noticeNo);
+    let result = await conn.query(noticeSql.deleteNotice, [noticeNo]);
     return result;
   } catch (err) {
     console.log(err);
@@ -89,4 +138,7 @@ module.exports = {
   selectNoticeByNo,
   insertNotice,
   deleteNotice,
+  selectFilesByNoticeNo,
+  insertNoticeFile,
+  selectFileByFileNo,
 };
