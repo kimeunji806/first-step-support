@@ -1,8 +1,13 @@
 <script setup>
-import { reactive, ref } from 'vue';
+import { onBeforeMount, ref } from 'vue';
+import { useBeneStore } from '@/stores/surBene';
+import { useRoute } from 'vue-router';
 
+const userbeneStore = useBeneStore();
+const route = useRoute();
+const selectNo = Number(route.params.no);
 const priority = ref(null);
-const priorityAlert = ref('');
+const priorityAlert = ref('미지정');
 const isVisible = ref(false);
 
 const clickPriority = async (role_name) => {
@@ -17,10 +22,11 @@ const clickPriority = async (role_name) => {
     } else if (priority.value === 'd3') {
         priorityAlert.value = '긴급';
     }
-
-    console.log(priorityAlert.value);
-    return (isVisible.value = !isVisible.value);
 };
+
+onBeforeMount(async () => {
+    await userbeneStore.fetchUsers(selectNo);
+});
 </script>
 <template>
     <div class="p-6 bg-slate-100 min-h-full">
@@ -28,13 +34,11 @@ const clickPriority = async (role_name) => {
             <h2 class="text-lg font-bold mb-4 border-b pb-2">우선순위 입력</h2>
 
             <div class="flex items-center justify-between mt-2 mb-8 gap-8">
-                <button label="계획" class="w-40 h-40 rounded-full flex items-center justify-center text-lg font-bold bg-gray-400 text-white" @click="clickPriority('d1')" />
-                <button label="중점" class="w-40 h-40 rounded-full flex items-center justify-center text-lg font-bold bg-green-500 text-white" @click="clickPriority('d2')" />
-                <button label="긴급" class="w-40 h-40 rounded-full flex items-center justify-center text-lg font-bold bg-red-500 text-white" @click="clickPriority('d3')" />
+                <button class="w-40 h-40 rounded-full flex items-center justify-center text-lg font-bold bg-gray-400 text-white" @click="clickPriority('d1')">계획</button>
+                <button class="w-40 h-40 rounded-full flex items-center justify-center text-lg font-bold bg-green-500 text-white" @click="clickPriority('d2')">중점</button>
+                <button class="w-40 h-40 rounded-full flex items-center justify-center text-lg font-bold bg-red-500 text-white" @click="clickPriority('d3')">긴급</button>
             </div>
-            <div v-if="isVisible">
-                <h2 class="text-lg font-bold mb-4 border-b pb-2">우선순위 {{ priorityAlert }}을 선택하셨습니다.</h2>
-            </div>
+            <h2 class="text-lg font-bold mb-4 border-b pb-2">우선순위가 {{ priorityAlert }}입니다.</h2>
 
             <div class="text-right">
                 <button @click="submit" class="bg-green-400 hover:bg-green-500 text-white px-6 py-2 rounded-full">등록</button>
