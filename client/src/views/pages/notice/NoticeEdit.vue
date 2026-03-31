@@ -1,9 +1,11 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { useUserStore } from '@/stores/user';
 
 const route = useRoute();
 const router = useRouter();
+const userStore = useUserStore();
 
 const noticeNo = route.params.noticeNo;
 
@@ -53,7 +55,8 @@ const updateNotice = async () => {
             },
             body: JSON.stringify({
                 notice_title: notice.value.notice_title,
-                notice_content: notice.value.notice_content
+                notice_content: notice.value.notice_content,
+                user_no: userStore.user_no
             })
         });
         const data = await res.json();

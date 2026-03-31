@@ -26,10 +26,6 @@ const removeFile = (index) => {
 
 // 공지사항 등록
 const createNotice = async () => {
-    if (!userStore.user_no) {
-        alert('로그인 정보가 없습니다.');
-        return;
-    }
     try {
         const formData = new FormData();
 

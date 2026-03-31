@@ -7,7 +7,7 @@ export default [
     {
         path: '/admin/institutioninfo/edit',
         name: 'admin_institutioninfoEdit',
-        component: () => import('@/views/pages/mypage_e3/AdminMyInfoEdit.vue')
+        component: () => import('@/views/pages/mypage_e3/InstitutionInfoEdit.vue')
     },
     {
         path: '/institutioninfo',

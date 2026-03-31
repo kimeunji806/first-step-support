@@ -1,10 +1,14 @@
 const noticeMapper = require("../database/mappers/notice.mapper");
 const { pool } = require("../database/DAO");
 
-// 공지사항 조회
+// 공지사항 조회(기관별)
 const findAll = async (institutionNo) => {
-  const list = await noticeMapper.selectAllNotice(institutionNo);
-  return list || [];
+  return await noticeMapper.selectAllNotice(institutionNo);
+};
+
+// 공지사항 조회(전체 : 시스템관리자)
+const findAllAdmin = async () => {
+  return await noticeMapper.selectAllNoticeAdmin();
 };
 
 // 공지사항 상세조회
@@ -70,8 +74,14 @@ const findFileByNo = async (fileNo) => {
 };
 
 // 공지사항 수정
-const modifyInfo = async (noticeInfo) => {
-  let result = await noticeMapper.updateNotice(noticeInfo);
+const modifyInfo = async (noticeInfo, loginUserNo) => {
+  const noticeNo = noticeInfo.notice_no;
+  const writer = await noticeMapper.selectNoticeWriter(noticeNo);
+  if (String(writer.user_no) !== String(loginUserNo)) {
+    return { status: false, message: "본인이 작성한 글만 수정할 수 있습니다." };
+  }
+
+  const result = await noticeMapper.updateNotice(noticeInfo);
 
   let resObj = {
     status: result.changedRows > 0 || result.affectedRows > 0,
@@ -83,8 +93,13 @@ const modifyInfo = async (noticeInfo) => {
 };
 
 // 공지사항 삭제
-const removeInfo = async (noticeNo) => {
-  let result = await noticeMapper.deleteNotice(noticeNo);
+const removeInfo = async (noticeNo, loginUserNo) => {
+  const writer = await noticeMapper.selectNoticeWriter(noticeNo);
+  if (String(writer.user_no) !== String(loginUserNo)) {
+    return { status: false, message: "본인이 작성한 글만 삭제할 수 있습니다." };
+  }
+
+  const result = await noticeMapper.deleteNotice(noticeNo);
   let resObj = {
     status: result.affectedRows > 0,
     notice_no: noticeNo,
@@ -94,6 +109,7 @@ const removeInfo = async (noticeNo) => {
 
 module.exports = {
   findAll,
+  findAllAdmin,
   findInfoByNo,
   createInfo,
   modifyInfo,

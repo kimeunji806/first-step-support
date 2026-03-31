@@ -10,6 +10,7 @@ const userStore = useUserStore();
 const notice = ref({
     notice_title: '',
     notice_content: '',
+    user_no: '',
     user_name: '',
     created_at: '',
     files: []
@@ -29,6 +30,7 @@ const findNoticeByNo = async () => {
         notice.value = {
             notice_title: data.notice_title || '',
             notice_content: data.notice_content || '',
+            user_no: data.user_no || '',
             user_name: data.user_name || '',
             created_at: data.created_at || '',
             files: data.files || []
@@ -54,7 +56,7 @@ const goToList = () => {
 
 // 공지사항 수정,삭제 권한 체크
 const canManageNotice = computed(() => {
-    return ['e2', 'e3', 'e4'].includes(userStore.role);
+    return ['e2', 'e3', 'e4'].includes(userStore.role) && notice.value.user_no === userStore.user_no;
 });
 
 // 공지사항 수정으로 이동
@@ -71,7 +73,13 @@ const deleteNotice = async () => {
         const noticeNo = route.params.noticeNo;
 
         const res = await fetch(`/api/notice/del/${noticeNo}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: {
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify({
+                user_no: userStore.user_no
+            })
         });
 
         const data = await res.json();
@@ -79,24 +87,17 @@ const deleteNotice = async () => {
             alert('삭제되었습니다.');
             router.push('/notice');
         } else {
-            alert('삭제에 실패했습니다.');
+            alert(data.message || '삭제 권한이 없습니다.');
         }
     } catch (err) {
         console.log(err);
     }
 };
 
-// 첨부파일 다운로드
+// 첨부파일 다운로드 03/31 수정
 const downloadFile = (fileNo) => {
     const downloadUrl = `/api/notice/file/${fileNo}`;
-
-    // 새창 없이 바로 다운로드
-    const link = document.createElement('a');
-    link.href = downloadUrl;
-    link.setAttribute('download', '');
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    window.location.href = downloadUrl;
 };
 
 onBeforeMount(() => {

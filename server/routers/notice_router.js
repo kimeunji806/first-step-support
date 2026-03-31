@@ -5,7 +5,14 @@ const upload = require("../upload");
 const path = require("path");
 const fs = require("fs");
 
-// 공지사항 전체조회
+// 공지사항 조회(전체 : 시스템관리자)
+router.get(`/notice`, async (req, res) => {
+  const result = await noticeService.findAllAdmin();
+  console.log("전체 공지사항 result:", result, Array.isArray(result));
+  return res.status(200).json(result);
+});
+
+// 공지사항 조회(기관별)
 router.get(`/notice/:institution_no`, async (req, res) => {
   const institutionNo = req.params.institution_no;
   const result = await noticeService.findAll(institutionNo);
@@ -19,8 +26,8 @@ router.get("/notice/file/:fileNo", async (req, res) => {
     const fileNo = req.params.fileNo;
     const file = await noticeService.findFileByNo(fileNo);
 
-    const cleanPath = file.file_path.replace(/^uploads[\\/]/, "");
-    const absolutePath = path.join("D:/the_first/server/uploads", cleanPath);
+    // 03/31 수정
+    const filePath = file.file_path;
 
     const encodedName = encodeURIComponent(file.file_name.normalize("NFC"));
 
@@ -29,7 +36,7 @@ router.get("/notice/file/:fileNo", async (req, res) => {
       `attachment; filename*=UTF-8''${encodedName}`,
     );
 
-    res.download(absolutePath, file.file_name);
+    return res.download(filePath);
   } catch (err) {
     console.log(err);
   }
@@ -78,12 +85,15 @@ router.post(`/notice`, upload.array("files"), async (req, res) => {
 // 공지사항 수정
 router.put(`/notice/detail/:noticeNo`, async (req, res) => {
   try {
+    const noticeNo = req.params.noticeNo;
+    const userNo = req.body.user_no;
+
     const noticeInfo = {
       notice_no: req.params.noticeNo,
       notice_title: req.body.notice_title,
       notice_content: req.body.notice_content,
     };
-    const result = await noticeService.modifyInfo(noticeInfo);
+    const result = await noticeService.modifyInfo(noticeInfo, userNo);
 
     res.json(result);
   } catch (err) {
@@ -95,12 +105,12 @@ router.put(`/notice/detail/:noticeNo`, async (req, res) => {
 router.delete(`/notice/del/:noticeNo`, async (req, res) => {
   try {
     const noticeNo = req.params.noticeNo;
+    const userNo = req.body.user_no;
 
-    const result = await noticeService.removeInfo(noticeNo);
+    const result = await noticeService.removeInfo(noticeNo, userNo);
     res.json(result);
   } catch (err) {
     console.log(err);
-    res.status.json();
   }
 });
 
