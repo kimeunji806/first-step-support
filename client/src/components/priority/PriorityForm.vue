@@ -1,9 +1,18 @@
 <script setup>
-import { reactive, ref } from 'vue';
+import { onBeforeMount, ref, computed } from 'vue';
+import { useBeneStore } from '@/stores/surBene';
+import { useRoute } from 'vue-router';
+import { useUserStore } from '@/stores/user';
+import { useRouter } from 'vue-router';
 
+const userStore = useUserStore();
+const user_no = userStore.user_no;
+
+const userbeneStore = useBeneStore();
+const route = useRoute();
+const selectNo = Number(route.params.no);
 const priority = ref(null);
-const priorityAlert = ref('');
-const isVisible = ref(false);
+const priorityAlert = ref('미지정');
 
 const clickPriority = async (role_name) => {
     console.log(role_name);
@@ -17,27 +26,69 @@ const clickPriority = async (role_name) => {
     } else if (priority.value === 'd3') {
         priorityAlert.value = '긴급';
     }
-
-    console.log(priorityAlert.value);
-    return (isVisible.value = !isVisible.value);
 };
+
+const addPriorityInfo = async () => {
+    console.log(`우선순위 번호 -> ${priority}`);
+    console.log(`조사지 번호 -> ${selectNo}`);
+    console.log(`작성자 번호 -> ${user_no}`);
+    let data = {
+        priority_id: priority.value,
+        survey_no: selectNo,
+        writer_no: user_no
+    };
+
+    console.log(data);
+
+    let result = await fetch(`/api/priority`, {
+        method: 'POST',
+        headers: {
+            'content-type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+        // .then((res) => res.json())
+        .catch((err) => console.log(err));
+    // if (result.status == 'success') {
+    //     router.resolve('/sign/login');
+    // } else {
+    //     console.log('등록되지않았습니다.');
+    //     inPrinted.value = true;
+    // }
+};
+const priorityList = ref([]);
+const filteredApprovalForm = computed(() => {
+    console.log(priorityList.value);
+    return priorityList.value.filter((item) => item.approval === 'a1');
+});
+
+onBeforeMount(async () => {
+    try {
+        const resp = await fetch(`/api/priority/${selectNo}`);
+        const data = await resp.json();
+        priorityList.value = data;
+        console.log(priorityList.value);
+    } catch (err) {
+        console.log(err);
+    }
+});
 </script>
 <template>
     <div class="p-6 bg-slate-100 min-h-full">
-        <div class="max-w-2xl mx-auto bg-white p-6 rounded-xl shadow">
+        <span v-if="filteredApprovalForm.length > 0" class="text-m font-bold mb-4 border-b pb-2">우선순위가 이미 선정되었습니다.</span>
+
+        <div v-if="filteredApprovalForm.length === 0" class="max-w-2xl mx-auto bg-white p-6 rounded-xl shadow">
             <h2 class="text-lg font-bold mb-4 border-b pb-2">우선순위 입력</h2>
 
             <div class="flex items-center justify-between mt-2 mb-8 gap-8">
-                <button label="계획" class="w-40 h-40 rounded-full flex items-center justify-center text-lg font-bold bg-gray-400 text-white" @click="clickPriority('d1')" />
-                <button label="중점" class="w-40 h-40 rounded-full flex items-center justify-center text-lg font-bold bg-green-500 text-white" @click="clickPriority('d2')" />
-                <button label="긴급" class="w-40 h-40 rounded-full flex items-center justify-center text-lg font-bold bg-red-500 text-white" @click="clickPriority('d3')" />
+                <button class="w-40 h-40 rounded-full flex items-center justify-center text-lg font-bold bg-gray-400 text-white" @click="clickPriority('d1')">계획</button>
+                <button class="w-40 h-40 rounded-full flex items-center justify-center text-lg font-bold bg-green-500 text-white" @click="clickPriority('d2')">중점</button>
+                <button class="w-40 h-40 rounded-full flex items-center justify-center text-lg font-bold bg-red-500 text-white" @click="clickPriority('d3')">긴급</button>
             </div>
-            <div v-if="isVisible">
-                <h2 class="text-lg font-bold mb-4 border-b pb-2">우선순위 {{ priorityAlert }}을 선택하셨습니다.</h2>
-            </div>
+            <h2 class="text-lg font-bold mb-4 border-b pb-2">우선순위가 {{ priorityAlert }}입니다.</h2>
 
             <div class="text-right">
-                <button @click="submit" class="bg-green-400 hover:bg-green-500 text-white px-6 py-2 rounded-full">등록</button>
+                <button @click="addPriorityInfo" class="bg-green-400 hover:bg-green-500 text-white px-6 py-2 rounded-full">등록</button>
             </div>
         </div>
     </div>

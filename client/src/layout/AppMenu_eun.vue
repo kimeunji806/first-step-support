@@ -7,7 +7,7 @@ const userStore = useUserStore();
 
 // 롤별 메뉴 구성
 const menuByRole = {
-    e1: ['HOME', 'MYPAGE', 'SURVEY_INPUT', 'NOTICE'],
+    e1: ['HOME_USER', 'MYPAGE', 'SURVEY_INPUT', 'NOTICE'],
     e2: ['HOME', 'MYPAGE', 'NOTICE'],
     e3: ['HOME', 'MYPAGE', 'APPROVAL', 'SEARCH', 'MANAGER', 'NOTICE'],
     e4: ['INSTITUTIONLIST', 'APPROVAL', 'SURVEY', 'NOTICE']
@@ -17,6 +17,7 @@ const menuByRole = {
 const MENU = {
     // 지원신청내역(홈)
     HOME: { label: '지원신청내역', to: '/', icon: 'pi pi-check-square' },
+    HOME_USER: { label: '지원신청내역', to: '/dashboard_user', icon: 'pi pi-check-square' },
 
     // 마이페이지
     MYPAGE: {
