@@ -1,12 +1,26 @@
 const { pool } = require("../DAO");
 const noticeSql = require("../sql/notice");
 
-// 공지사항 조회
+// 공지사항 조회(기관별)
 const selectAllNotice = async (institutionNo) => {
   let conn = null;
   try {
     conn = await pool.getConnection();
     const rows = await conn.execute(noticeSql.selectAllNotice, [institutionNo]);
+    return rows || [];
+  } catch (err) {
+    console.log(err);
+  } finally {
+    if (conn) conn.release();
+  }
+};
+
+// 공지사항 조회(전체 : 시스템관리자)
+const selectAllNoticeAdmin = async () => {
+  let conn = null;
+  try {
+    conn = await pool.getConnection();
+    const rows = await conn.execute(noticeSql.selectAllNoticeAdmin);
     return rows || [];
   } catch (err) {
     console.log(err);
@@ -132,8 +146,23 @@ const deleteNotice = async (noticeNo) => {
   }
 };
 
+// 공지 작성자 확인
+const selectNoticeWriter = async (noticeNo) => {
+  let conn = null;
+  try {
+    conn = await pool.getConnection();
+    const rows = await conn.execute(noticeSql.selectNoticeWriter, [noticeNo]);
+    return rows[0] || null;
+  } catch (err) {
+    console.log(err);
+  } finally {
+    if (conn) conn.release();
+  }
+};
+
 module.exports = {
   selectAllNotice,
+  selectAllNoticeAdmin,
   updateNotice,
   selectNoticeByNo,
   insertNotice,
@@ -141,4 +170,5 @@ module.exports = {
   selectFilesByNoticeNo,
   insertNoticeFile,
   selectFileByFileNo,
+  selectNoticeWriter,
 };

@@ -1,6 +1,6 @@
 const { pool } = require("../DAO");
 
-// 공지사항 조회
+// 공지사항 조회(기관별)
 const selectAllNotice = `
 SELECT n.notice_no,
        n.notice_title,
@@ -12,6 +12,20 @@ FROM notice n
 JOIN \`user\` u ON n.user_no = u.user_no
 JOIN institution i ON n.institution_no = i.institution_no
 WHERE n.institution_no = ?
+ORDER BY n.notice_no DESC
+`;
+
+// 공지사항 조회(전체 : 시스템관리자)
+const selectAllNoticeAdmin = `
+SELECT n.notice_no,
+       n.notice_title,
+       n.notice_content,
+       i.name,
+       u.user_name,
+       n.created_at
+FROM notice n
+JOIN \`user\` u ON n.user_no = u.user_no
+JOIN institution i ON n.institution_no = i.institution_no
 ORDER BY n.notice_no DESC
 `;
 
@@ -75,12 +89,21 @@ DELETE FROM notice
 WHERE notice_no = ?
 `;
 
+// 공지 작성자 확인
+const selectNoticeWriter = `
+SELECT user_no
+FROM notice
+WHERE notice_no = ?
+`;
+
 module.exports = {
   selectAllNotice,
+  selectAllNoticeAdmin,
   selectNoticeByNo,
   insertNotice,
   updateNotice,
   deleteNotice,
   selectFilesByNoticeNo,
   insertNoticeFile,
+  selectNoticeWriter,
 };

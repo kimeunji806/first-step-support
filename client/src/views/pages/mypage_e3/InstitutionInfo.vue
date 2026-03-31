@@ -11,14 +11,17 @@ const userStore = useUserStore();
 const institution = ref(null);
 const activeTab = ref(Number(route.query.tab ?? 0));
 
-watch(activeTab, (newValue) => {
-    console.log('activeTab 변경:', newValue, typeof newValue);
-});
+watch(
+    () => route.query.tab,
+    (newTab) => {
+        activeTab.value = Number(newTab ?? 0);
+    }
+);
 
 const findAllInfo = async () => {
     try {
         const insNo = userStore.institution;
-        const res = await fetch(`/api/admin/institutioninfo?institution_no=${insNo}`);
+        const res = await fetch(`/api/admin/institutioninfo/${insNo}`);
         const info = await res.json();
         institution.value = info;
     } catch (err) {
@@ -29,7 +32,7 @@ const findAllInfo = async () => {
 const goToEditForm = () => {
     router.push({
         path: '/admin/institutioninfo/edit',
-        query: { tab: 1 }
+        query: { tab: '1' }
     });
 };
 
@@ -54,6 +57,10 @@ onBeforeMount(() => {
 
             <div v-else-if="activeTab === 1" class="mt-4">
                 <div v-if="institution">
+                    <div class="mb-5">
+                        <div class="text-surface-900 dark:text-surface-0 text-2xl font-medium mb-1">마이페이지</div>
+                        <span class="text-muted-color"> 기관관리자 기관 정보를 확인할 수 있습니다. </span>
+                    </div>
                     <DataTable
                         :value="[
                             { label: '기관', value: institution.name },

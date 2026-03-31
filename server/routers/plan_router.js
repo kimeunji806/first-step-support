@@ -182,11 +182,11 @@ router.get("/file/download/:fileNo", async (req, res) => {
 ========================= */
 
 // 지원계획 상세 1건 조회(수정용)
-router.get("/detail/:supportPlanNo/:writerNo", async (req, res) => {
+router.get("/detail/:supportPlanNo/:loginUserNo", async (req, res) => {
   try {
-    const { supportPlanNo, writerNo } = req.params;
+    const { supportPlanNo, loginUserNo } = req.params;
 
-    const item = await service.getPlanByNo(supportPlanNo, writerNo);
+    const item = await service.getPlanByNo(supportPlanNo, loginUserNo);
 
     if (!item) {
       return res.status(404).json({
@@ -198,19 +198,24 @@ router.get("/detail/:supportPlanNo/:writerNo", async (req, res) => {
   } catch (err) {
     console.error("지원계획 상세 조회 실패:", err);
     return res.status(500).json({
-      message: "지원계획 상세 조회 중 오류가 발생했습니다.",
+      message: err.message || "지원계획 상세 조회 중 오류가 발생했습니다.",
     });
   }
 });
 
-// 지원계획 수정
+/* =========================
+   지원계획 수정
+========================= */
 router.put("/:supportPlanNo", upload.array("files"), async (req, res) => {
   try {
     const { supportPlanNo } = req.params;
     const { writer_no, plan_title, plan_content, delete_file_nos } = req.body;
     const files = req.files || [];
 
-    if (!writer_no || !plan_title || !plan_content) {
+    // 현재 프론트 구조상 writer_no에는 로그인 사용자 번호가 들어옴
+    const loginUserNo = writer_no;
+
+    if (!loginUserNo || !plan_title || !plan_content) {
       return res.status(400).json({
         message: "필수값이 누락되었습니다.",
       });
@@ -232,7 +237,7 @@ router.put("/:supportPlanNo", upload.array("files"), async (req, res) => {
 
     const result = await service.editPlan({
       support_plan_no: supportPlanNo,
-      writer_no,
+      login_user_no: loginUserNo,
       plan_title,
       plan_content,
       delete_file_nos: deleteFileNos,
@@ -386,5 +391,20 @@ router.post("/", upload.array("files"), async (req, res) => {
     });
   }
 });
-
+/* =========================
+   지원계획 수정이력 조회
+========================= */
+// 특정 지원계획 번호 기준 수정이력 목록 조회
+router.get("/history/:supportPlanNo", async (req, res) => {
+  try {
+    const { supportPlanNo } = req.params;
+    const list = await service.getPlanHistoryList(supportPlanNo);
+    return res.json(list ?? []);
+  } catch (err) {
+    console.error("지원계획 수정이력 조회 실패:", err);
+    return res.status(500).json({
+      message: "지원계획 수정이력 조회 중 오류가 발생했습니다.",
+    });
+  }
+});
 module.exports = router;

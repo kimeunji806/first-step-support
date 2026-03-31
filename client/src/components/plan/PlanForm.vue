@@ -613,7 +613,7 @@ watch(
 </script>
 
 <template>
-    <div class="p-6 bg-slate-100 min-h-screen">
+    <div class="p-6 bg-slate-100 min-h-full">
         <div class="max-w-2xl mx-auto bg-white p-6 rounded-xl shadow">
             <!-- 화면 제목 -->
             <h2 class="text-lg font-bold mb-4 border-b pb-2">
