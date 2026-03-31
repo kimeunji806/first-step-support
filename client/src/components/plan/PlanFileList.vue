@@ -45,13 +45,15 @@ const loadFiles = async () => {
         fileList.value = [];
     }
 };
+
 /* =========================
    첨부파일 목록 자동 새로고침 이벤트
 ========================= */
-// PlanForm.vue에서 수정/등록 후 발생시키는 이벤트를 받으면 첨부파일 목록 재조회
+// PlanForm.vue에서 등록/수정/삭제 후 발생시키는 이벤트를 받으면 첨부파일 목록 재조회
 const handlePlanFileRefresh = async () => {
     await loadFiles();
 };
+
 /* =========================
    파일 다운로드
 ========================= */
@@ -66,15 +68,25 @@ const downloadFile = (fileNo) => {
 // 컴포넌트가 처음 열릴 때 첨부파일 목록 조회
 onMounted(() => {
     loadFiles();
+
+    // 지원계획 목록 새로고침 이벤트를 같이 받아서 파일 목록도 다시 조회
     window.addEventListener('plan-list-refresh', handlePlanFileRefresh);
 });
+
 // 부모에서 supportPlanNo가 바뀌면 다시 조회
 watch(
     () => props.supportPlanNo,
-    async () => {
-        await loadFiles();
+    async (newValue, oldValue) => {
+        if (newValue !== oldValue) {
+            await loadFiles();
+        }
     }
 );
+
+// 컴포넌트가 사라질 때 이벤트 제거
+onBeforeUnmount(() => {
+    window.removeEventListener('plan-list-refresh', handlePlanFileRefresh);
+});
 </script>
 
 <template>

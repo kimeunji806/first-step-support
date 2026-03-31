@@ -7,6 +7,7 @@ import priorityForm from '@/components/priority/PriorityForm.vue';
 import planForm from '@/components/plan/PlanForm.vue';
 import resultForm from '@/components/result/ResultForm.vue';
 import AdminPlanApprovalForm from '@/components/plan/AdminPlanApprovalForm.vue'; // 관리자용 지원계획 승인/반려 폼
+import AdminResultApprovalForm from '@/components/result/AdminResultApprovalForm.vue'; // 관리자용 지원결과 승인/반려 폼
 const loginUser = JSON.parse(localStorage.getItem('user')); // 로그인 사용자 정보
 const loginRole = loginUser?.role; // 로그인 사용자 역할
 import priorityApprovalForm from '@/components/priority/PriorityApprovalForm.vue';
@@ -22,7 +23,7 @@ const dropdownValues = [
     { name: '상담기록', code: 'A', component: counselForm },
     { name: '우선순위', code: 'B', component: user_role === 'e3' ? priorityApprovalForm : priorityForm },
     { name: '지원계획', code: 'C', component: loginRole === 'e3' ? AdminPlanApprovalForm : planForm },
-    { name: '지원결과', code: 'D', component: resultForm }
+    { name: '지원결과', code: 'D', component: loginRole === 'e3' ? AdminResultApprovalForm : resultForm }
 ];
 // 셀렉트에서 선택한 값
 const dropdownValue = shallowRef(null);

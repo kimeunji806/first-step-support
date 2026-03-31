@@ -231,11 +231,11 @@ router.get("/file/download/:fileNo", async (req, res) => {
 ========================= */
 
 // 결과서 상세 1건 조회(수정용)
-router.get("/detail/:supportResultNo/:writerNo", async (req, res) => {
+router.get("/detail/:supportResultNo/:loginUserNo", async (req, res) => {
   try {
-    const { supportResultNo, writerNo } = req.params;
+    const { supportResultNo, loginUserNo } = req.params;
 
-    const item = await service.getResultByNo(supportResultNo, writerNo);
+    const item = await service.getResultByNo(supportResultNo, loginUserNo);
 
     if (!item) {
       return res.status(404).json({
@@ -247,12 +247,12 @@ router.get("/detail/:supportResultNo/:writerNo", async (req, res) => {
   } catch (err) {
     console.error("지원결과 상세 조회 실패:", err);
     return res.status(500).json({
-      message: "지원결과 상세 조회 중 오류가 발생했습니다.",
+      message: err.message || "지원결과 상세 조회 중 오류가 발생했습니다.",
     });
   }
 });
 
-// 결과서 수정
+// 검토중(a0)인 결과서 본문 수정
 router.put("/:supportResultNo", upload.array("files"), async (req, res) => {
   try {
     const { supportResultNo } = req.params;
@@ -260,8 +260,11 @@ router.put("/:supportResultNo", upload.array("files"), async (req, res) => {
       req.body;
     const files = req.files || [];
 
+    // 현재 프론트 구조상 writer_no에는 로그인 사용자 번호가 들어옴
+    const loginUserNo = writer_no;
+
     if (
-      !writer_no ||
+      !loginUserNo ||
       !result_title ||
       !result_content ||
       finish === undefined
@@ -283,7 +286,7 @@ router.put("/:supportResultNo", upload.array("files"), async (req, res) => {
 
     const result = await service.editResult({
       support_result_no: supportResultNo,
-      writer_no,
+      login_user_no: loginUserNo,
       result_title,
       result_content,
       finish,
@@ -302,8 +305,7 @@ router.put("/:supportResultNo", upload.array("files"), async (req, res) => {
     });
   }
 });
-
-// 결과서 삭제
+// 결과서 상세 1건 조회(삭제용)
 router.delete("/:supportResultNo/:writerNo", async (req, res) => {
   try {
     const { supportResultNo, writerNo } = req.params;
@@ -434,5 +436,20 @@ router.put("/admin/reject/:supportResultNo", async (req, res) => {
     });
   }
 });
-
+/* =========================
+   지원결과 수정이력 조회
+========================= */
+// 특정 지원결과 번호 기준 수정이력 목록 조회
+router.get("/history/:supportResultNo", async (req, res) => {
+  try {
+    const { supportResultNo } = req.params;
+    const list = await service.getResultHistoryList(supportResultNo);
+    return res.json(list ?? []);
+  } catch (err) {
+    console.error("지원결과 수정이력 조회 실패:", err);
+    return res.status(500).json({
+      message: "지원결과 수정이력 조회 중 오류가 발생했습니다.",
+    });
+  }
+});
 module.exports = router;

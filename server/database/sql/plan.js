@@ -3,6 +3,7 @@
 ========================= */
 // survey_no 기준으로 지원계획 목록 조회
 // files 테이블은 1:N 관계라서 GROUP_CONCAT으로 파일명을 한 줄로 묶음
+// writer_no도 같이 내려서 프론트에서 삭제 버튼 조건에 사용
 const planList = `
 SELECT sp.support_plan_no as support_plan_no
       ,sp.plan_title as title
@@ -10,6 +11,7 @@ SELECT sp.support_plan_no as support_plan_no
       ,sp.plan_approval as approval
       ,cc.code_name as approval_name
       ,sp.plan_reason_rejection as rejection_reason
+      ,sp.writer_no as writer_no
       ,GROUP_CONCAT(f.file_name ORDER BY f.file_no SEPARATOR ', ') as filename
       ,u.user_name as name
       ,DATE_FORMAT(sp.created_at, '%Y-%m-%d') as created_at
@@ -27,11 +29,11 @@ GROUP BY sp.support_plan_no
         ,sp.plan_approval
         ,cc.code_name
         ,sp.plan_reason_rejection
+        ,sp.writer_no
         ,u.user_name
         ,sp.created_at
 ORDER BY sp.support_plan_no DESC
 `;
-
 /* =========================
    survey 기준 대상자 조회
 ========================= */
@@ -156,30 +158,58 @@ WHERE file_no = ?
 /* =========================
    지원계획 수정/삭제 관련 SQL
 ========================= */
-// 수정 버튼 클릭 시 입력폼에 채울 상세 데이터 조회
-// 검토중(a0)인 본인 계획서만 수정 가능하도록 조건을 둠
+// 수정 권한 체크 + 수정용 상세 조회
+// 검토중(a0) 상태이면서
+// 로그인 사용자가 해당 조사지의 담당자(manager_no) 또는
+// 부담당자(sub_manager_no)인 경우만 조회 가능
+// 담당자 정보는 survey_input에 있으므로 survey_input 기준으로 검사
 const selectPlanByNo = `
-SELECT support_plan_no
-      ,survey_no
-      ,beneficiaries_no
-      ,plan_title
-      ,plan_content
-      ,writer_no
-      ,plan_approval
-      ,DATE_FORMAT(created_at, '%Y-%m-%d') as created_at
-FROM support_plan
-WHERE support_plan_no = ?
-  AND writer_no = ?
-  AND plan_approval = 'a0'
+SELECT sp.support_plan_no
+      ,sp.survey_no
+      ,sp.beneficiaries_no
+      ,sp.plan_title
+      ,sp.plan_content
+      ,sp.writer_no
+      ,sp.plan_approval
+      ,si.manager_no
+      ,si.sub_manager_no
+      ,DATE_FORMAT(sp.created_at, '%Y-%m-%d') as created_at
+FROM support_plan sp
+JOIN survey_input si
+  ON sp.survey_no = si.survey_no
+WHERE sp.support_plan_no = ?
+  AND sp.plan_approval = 'a0'
+  AND (
+        si.manager_no = ?
+        OR si.sub_manager_no = ?
+      )
 `;
 
-// 검토중(a0)인 본인 계획서만 본문 수정
+/* =========================
+   지원계획 수정 권한 체크용 SQL
+========================= */
+// 실제 update 전에
+// 현재 로그인 사용자가 해당 조사지의 담당자/부담당자인지 확인
+const selectPlanPermissionInfo = `
+SELECT sp.support_plan_no
+      ,sp.writer_no
+      ,sp.plan_approval
+      ,si.manager_no
+      ,si.sub_manager_no
+FROM support_plan sp
+JOIN survey_input si
+  ON sp.survey_no = si.survey_no
+WHERE sp.support_plan_no = ?
+`;
+
+// 검토중(a0)인 계획서 본문 수정
+// 실제 수정은 support_plan_no + a0 조건으로만 처리하고
+// 담당자/부담당자 권한은 서비스에서 먼저 검사
 const updatePlan = `
 UPDATE support_plan
 SET plan_title = ?
    ,plan_content = ?
 WHERE support_plan_no = ?
-  AND writer_no = ?
   AND plan_approval = 'a0'
 `;
 
@@ -258,7 +288,56 @@ SET plan_approval = 'a2'
 WHERE support_plan_no = ?
   AND plan_approval = 'a0'
 `;
+/* =========================
+   지원계획 등록 권한 확인
+========================= */
+// survey_no 기준으로 현재 로그인 사용자가
+// 담당자(manager_no) 또는 부담당자(sub_manager_no)인지 확인
+const selectPlanWritePermission = `
+SELECT survey_no
+      ,beneficiaries_no
+      ,manager_no
+      ,sub_manager_no
+FROM survey_input
+WHERE survey_no = ?
+`;
+/* =========================
+   지원계획 수정이력 저장 관련 SQL
+========================= */
+// 수정 저장 전에 기존 지원계획 원본을 support_history에 저장
+const insertPlanHistory = `
+INSERT INTO support_history (
+    support_plan_no,
+    history_title,
+    history_content,
+    history_writer,
+    approval,
+    role,
+    created_at
+) VALUES (?, ?, ?, ?, ?, ?, NOW())
+`;
 
+/* =========================
+   지원계획 수정이력 조회 관련 SQL
+========================= */
+// 특정 지원계획의 수정이력 목록 조회
+// 작성자명, 권한명까지 같이 조회해서 모달에 바로 사용
+const selectPlanHistoryList = `
+SELECT sh.support_history_no as history_no
+      ,DATE_FORMAT(sh.created_at, '%Y-%m-%d %H:%i') as created_at
+      ,u.user_name as writer
+      ,cc.code_name as role
+      ,sh.history_title
+      ,sh.history_content
+      ,sh.approval
+FROM support_history sh
+JOIN user u
+  ON sh.history_writer = u.user_no
+LEFT JOIN common_code cc
+  ON sh.role = cc.common_id
+WHERE sh.support_plan_no = ?
+ORDER BY sh.created_at DESC
+`;
 module.exports = {
   planList,
   findBeneficiaryNoBySurvey,
@@ -279,4 +358,8 @@ module.exports = {
   adminPlanList,
   approvePlan,
   rejectPlan,
+  selectPlanPermissionInfo,
+  selectPlanWritePermission,
+  insertPlanHistory,
+  selectPlanHistoryList,
 };
