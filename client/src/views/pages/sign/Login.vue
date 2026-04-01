@@ -30,7 +30,7 @@ const userLogin = async () => {
         if (user.approval === 0) {
             router.push('/sign/access'); // 승인 대기
         } else {
-            router.push('/auth/approval'); // 나중에 승인시 갈 페이지
+            router.push('/'); // 나중에 승인시 갈 페이지
         }
     } else {
         alert('아이디 또는 비밀번호 틀림');

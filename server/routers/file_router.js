@@ -2,8 +2,6 @@ const express = require("express");
 const router = express.Router();
 
 
-
-
 require('dotenv').config();
 const path = require('path');
 const UPLOAD_DIR = path.join(process.cwd(), 'uploads');

@@ -5,12 +5,13 @@ export const useBeneStore = defineStore('bene', {
     beneficiaries_no: 0,
     beneficiaries_name : null,
     survey_no: 0,
-    refreshCounsel: false
+    refreshCounsel: false,
+    selectedCounsel: null,
+    isEditMode: false
   }),
   actions: {
     async fetchUsers(user_no) {
       try {
-        
         const resp = await fetch(`/api/beneficiaries/${user_no}`)
         const data = await resp.json()
         this.beneficiaries_no = data[0].beneficiaries_no;

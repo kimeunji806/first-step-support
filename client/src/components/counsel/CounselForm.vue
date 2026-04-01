@@ -1,5 +1,5 @@
 <script setup>
-import { ref ,reactive, onBeforeMount } from 'vue';
+import { ref ,reactive, onBeforeMount, watch } from 'vue';
 import { useUserStore } from '@/stores/user';
 import { useBeneStore } from '@/stores/surBene';
 import { useRoute } from 'vue-router';
@@ -8,12 +8,14 @@ import { Button } from 'primevue';
 const userStore = useUserStore();
 const userbeneStore = useBeneStore();
 const route = useRoute();
+
 const userNo = userStore.user_no;
+const userRole = userStore.role;
+const userName = userStore.user_name;
 const beneNo = userbeneStore.beneficiaries_no;
 const surNo = userbeneStore.survey_no;
+
 const selectNo = Number(route.params.no);
-
-
 
 const form = reactive({
     date: '',
@@ -21,6 +23,31 @@ const form = reactive({
     content: '',
     file: []
 });
+
+// 수정 모드 상태
+const isEditMode = ref(false)
+const editNo = ref(null)
+
+// store 값 감지해서 form 채우기
+watch(() => userbeneStore.selectedCounsel, (data) => {
+    if (data) {
+        isEditMode.value = true
+        editNo.value = data.no
+
+        // 강제 초기화 후 세팅 (반응성 안정화)
+        form.date = ''
+        form.title = ''
+        form.content = ''
+
+        setTimeout(() => {
+            form.date = data.counseldate?.substring(0, 10) || ''
+            form.title = data.title || ''
+            form.content = data.content || ''
+        })
+    }
+})
+
+// ---------------- 기존 기능 유지 ----------------
 
 //임시저장 목록
 const tempList = ref([]);
@@ -36,6 +63,7 @@ const loadTempData = (item) => {
     form.content = item.content || ''
 }
 
+// 등록
 const submit = async () => {
     const formData = new FormData()
 
@@ -64,14 +92,44 @@ const submit = async () => {
     }
 }
 
+
+const update = async () => {
+    const counselNo =  userbeneStore.selectedCounsel.no
+
+    const formData = new FormData();
+
+    formData.append('date', form.date)
+    formData.append('title', form.title)
+    formData.append('content', form.content)
+    formData.append('surNo', surNo)
+    formData.append('beneNo', beneNo)
+    formData.append('userNo', userNo)
+    formData.append("no", counselNo);
+    formData.append("name", userName);
+    formData.append("role", userRole);
+
+    item.newFiles.forEach(file => {
+        formData.append("files", file);
+    });
+
+    formData.append("deleteFiles", JSON.stringify(item.deleteFiles));
+
+    await fetch(`/api/counselUpdate`, {
+        method: "PUT",
+        body: formData
+    });
+
+    await counsel();
+};
+
+
 //임시저장 목록 불러오기
 const temporaryStorageInfo = async (surNo, wNo) => {
-    
-        await fetch(`/api/counselSaveInfo/${surNo}/${wNo}`)
-            .then((resp) => resp.json())
-            .then((data) => {
-                tempList.value = Array.isArray(data) ? data : [data]
-            })
+    await fetch(`/api/counselSaveInfo/${surNo}/${wNo}`)
+        .then((resp) => resp.json())
+        .then((data) => {
+            tempList.value = Array.isArray(data) ? data : [data]
+        })
 }
 
 //임시저장하기
@@ -89,8 +147,7 @@ const temporaryStorage = async () => {
                 beneNo : beneNo
             })
         })
-            .then((resp) => resp.json())
-            await temporaryStorageInfo(userbeneStore.survey_no, userNo)
+        await temporaryStorageInfo(userbeneStore.survey_no, userNo)
 
     } catch {
         console.log((err)=>console.log(err))
@@ -104,8 +161,7 @@ const deleteSave = async () => {
         await fetch(`/api/counselSaveDelete/${recordNo}`, {
             method : 'delete',
         })
-            .then((resp) => resp.json())
-            await temporaryStorageInfo(userbeneStore.survey_no, userNo)
+        await temporaryStorageInfo(userbeneStore.survey_no, userNo)
 
     } catch {
         console.log((err)=>console.log(err))
@@ -117,14 +173,13 @@ onBeforeMount(async () => {
     if (userbeneStore.survey_no) {
         await temporaryStorageInfo(userbeneStore.survey_no, userNo);
     }
-
-});
+})
 </script>
 
-<template>
+<template >
     <div class="p-6 bg-slate-100 min-h-full">
         <div class="max-w-2xl mx-auto bg-white p-6 rounded-xl shadow">
-            <div v-if="tempList.length !== 0" class="mb-4">
+            <div v-if="tempList.length !== 0 && !userbeneStore.isEditMode" class="mb-4">
                 <h3 class="text-sm font-bold mb-3 inline-block">임시저장 목록</h3>
                 
                 
@@ -153,10 +208,12 @@ onBeforeMount(async () => {
     <div class="text-xs text-gray-400 mt-3 text-right">
         등록일자:{{ item.created_at }}
     </div>
-    <Button @click.stop="deleteSave" class="ml-105 mt-2" severity="danger">삭제</Button>
+    <Button @click.stop="deleteSave" class="ml-130 mt-2" severity="danger">삭제</Button>
 </div>
 </div>
-    <h2 class="text-lg font-bold mb-4 border-b pb-2">상담기록 입력</h2>
+    <h2 class="text-lg font-bold mb-4 border-b pb-2">
+        {{ userbeneStore.isEditMode ? '상담기록 수정' : '상담기록 입력' }}
+    </h2>
         <div class="mb-4">
             <label class="block mb-1 text-sm">상담일</label>
             <input type="date" v-model="form.date" class="w-full border rounded px-3 py-2 bg-gray-100" />
@@ -178,8 +235,17 @@ onBeforeMount(async () => {
         <input type="file" multiple @change="handleFile" />
 
         <div class="text-right">
-            <button @click="temporaryStorage" class="bg-yellow-400 hover:bg-yellow-500 text-white px-6 py-2 mr-2 rounded-full">임시저장</button>
-            <button @click="submit" class="bg-green-400 hover:bg-green-500 text-white px-6 py-2 rounded-full">등록</button>
+            <button 
+                v-if="!userbeneStore.isEditMode"
+                @click="temporaryStorage"
+                class="bg-yellow-400 hover:bg-yellow-500 text-white px-6 py-2 mr-2 rounded-full">
+                임시저장
+            </button>
+            <button 
+                @click="userbeneStore.isEditMode ? update() : submit()"
+                class="bg-green-400 hover:bg-green-500 text-white px-6 py-2 rounded-full">
+                {{ userbeneStore.isEditMode ? '수정' : '등록' }}
+            </button>
         </div>
     </div>
 </div>

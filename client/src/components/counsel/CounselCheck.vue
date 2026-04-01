@@ -8,6 +8,7 @@ const userStore = useUserStore()
 const userbeneStore = useBeneStore();
 const route = useRoute();
 
+
 const historyDialog = ref(false)
 const historyData = ref([])
 
@@ -16,14 +17,15 @@ const list = ref([]);
 const surNo = computed(() => {
   return userbeneStore.survey_no
 });
-const userName = userStore.user_name;
+
 const userNo = userStore.user_no;
-const userRole = userStore.role;
+
 const beneName = userbeneStore.beneficiaries_name;
 
 
 
 const counsel = async () => {
+  
   await fetch(`/api/counsel/${surNo.value}`)
     .then((resp) => resp.json())
     .then((data) => {
@@ -32,52 +34,18 @@ const counsel = async () => {
         filename: item.filename ? item.filename.split(',') : [],
         isEditing: false,
         newFiles: [],
-        deleteFiles: [], // ⭐ 중요
+        deleteFiles: [],
         isYour: item.wNo === userNo,
       }))
     })
 };
 
-
+//수정할 해당 값 피니아에 넣음 + 폼 수정모드 전환
 const handleClick = (item) => {
-  if (item.isEditing) {
-    counselUpdate(item)
-  }
-
-  item.isEditing = !item.isEditing
+  userbeneStore.selectedCounsel = item
+  userbeneStore.isEditMode = true
 }
 
-const handleFileUpload = (e, item) => {
-  item.newFiles = Array.from(e.target.files);
-};
-
-const removeFile = (item, file) => {
-  item.deleteFiles.push(file);
-  item.filename = item.filename.filter(f => f !== file);
-};
-
-const counselUpdate = async (item) => {
-  const formData = new FormData();
-
-  formData.append("no", item.no);
-  formData.append("title", item.title);
-  formData.append("content", item.content);
-  formData.append("name", userName);
-  formData.append("role", userRole);
-
-  item.newFiles.forEach(file => {
-    formData.append("files", file);
-  });
-
-  formData.append("deleteFiles", JSON.stringify(item.deleteFiles));
-
-  await fetch(`/api/counselUpdate`, {
-    method: "PUT",
-    body: formData
-  });
-
-  await counsel();
-};
 
 const counselHistory = async (no) => {
   await fetch(`/api/counselHistory/${no}`)
@@ -109,7 +77,7 @@ onBeforeMount(async() => {
 </script>
 
 <template>
-  <div class="card h-5/10 flex flex-col gap 4">
+  <div class="card h-7/10 flex flex-col gap 4">
     <div class="overflow-y-auto">
       <div v-if="list.length === 0" class="text-center text-gray-500 py-10">등록된 상담기록이 없습니다.</div>
       <div v-else></div>
@@ -130,13 +98,11 @@ onBeforeMount(async() => {
         <div class="border-t border-b py-2 mb-2">
           <span class="mr-2 font-medium">제목</span>
           <span v-if="!item.isEditing">{{ item.title }}</span>
-          <InputText v-if="item.isEditing" v-model="item.title" class="w-full md:w-[13rem]"/>
         </div>
           
         <div class="border-b py-2 mb-2"> 
           <span class="mr-2 font-medium">내용</span>
           <span v-if="!item.isEditing">{{ item.content }}</span>
-          <InputText v-if="item.isEditing" v-model="item.content" class="w-full md:w-[13rem]"/>
         </div>
 
         <div class="border-b py-2 mb-2">
@@ -146,10 +112,8 @@ onBeforeMount(async() => {
           <a :href="`/api/download/${encodeURIComponent(file)}`">
           {{ file }}
           </a>
-          <button v-if="item.isEditing" @click="removeFile(item, file)">❌</button>
         </div>
         <div v-if="item.isEditing" class="mt-2">
-        <input type="file" multiple @change="handleFileUpload($event, item)" />
         </div>
         </div>
 
@@ -160,7 +124,7 @@ onBeforeMount(async() => {
       </div>
       <div class="mt-auto flex justify-end gap-2">
         <Button type="submit" label="수정이력" class="w-24" @click="counselHistory(item.no)" />
-        <Button type="button" class="w-24" v-if="item.isYour" :label="item.isEditing ? '저장' : '수정'" @click="handleClick(item)"/>
+        <Button type="button" class="w-24" v-if="item.isYour" label="수정" @click="handleClick(item)"/>
         <Button type="submit" label="삭제" v-if="item.isYour" class="w-24 " severity="danger" @click="counselDelete(item.no)" />
       </div>
     </div>
