@@ -12,6 +12,7 @@ import result_index from '@/router/result_index';
 import sign_index from '@/router/sign_index';
 import survey_index from '@/router/survey_index';
 import common_index from '@/router/common_index';
+import sysadmin_institution_index from '@/router/sysadmin_institution_index';
 
 import { useUserStore } from '@/stores/user';
 
@@ -22,7 +23,7 @@ const router = createRouter({
         {
             path: '/',
             component: AppLayout,
-            children: [...common_index, ...counsel_index, ...institution_index, ...mypage_index, ...notice_index, ...plan_index, ...priority_index, ...register_index, ...result_index, ...survey_index]
+            children: [...common_index, ...counsel_index, ...institution_index, ...mypage_index, ...notice_index, ...plan_index, ...priority_index, ...register_index, ...result_index, ...survey_index, ...sysadmin_institution_index]
         }
     ]
 });

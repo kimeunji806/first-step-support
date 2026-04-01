@@ -298,7 +298,13 @@ const saveDraft = async () => {
             alert('내용을 입력해주세요.');
             return;
         }
+        if (form.files && form.files.length > 0) {
+            const ok = window.confirm('임시저장에는 첨부파일이 저장되지 않습니다.\n파일은 승인요청(또는 수정저장) 시에만 반영됩니다.\n그래도 임시저장하시겠습니까?');
 
+            if (!ok) {
+                return;
+            }
+        }
         const isDraftEditMode = !!selectedRecordNo.value;
 
         const url = isDraftEditMode ? `/api/result/record/${selectedRecordNo.value}` : '/api/result/record';
@@ -683,28 +689,28 @@ watch(
 </script>
 
 <template>
-    <div class="p-6 bg-slate-100 min-h-full">
+    <div class="card h-full flex flex-col gap-4">
         <div class="max-h-[700px] overflow-y-auto pr-2">
-            <div class="max-w-2xl mx-auto bg-white p-6 rounded-xl shadow">
+            <div class="max-w-2xl mx-auto">
                 <div class="overflow-y-auto">
                     <!-- 화면 제목 -->
-                    <h2 class="text-lg font-bold mb-4 border-b pb-2">
+                    <h2 class="font-bold text-lg mb-2 border-b pb-2">
                         {{ isEditMode ? '지원결과 수정' : '지원결과 입력' }}
                     </h2>
 
                     <!-- 수정 모드 안내 -->
-                    <p v-if="isEditMode" class="text-xs text-blue-600 mb-3">현재 수정 모드입니다. 검토중인 지원결과의 제목, 내용, 첨부파일, 종결 여부를 수정할 수 있습니다.</p>
+                    <p v-if="isEditMode" class="text-sm text-blue-600 mb-3">현재 수정 모드입니다. 검토중인 지원결과의 제목, 내용, 첨부파일, 종결 여부를 수정할 수 있습니다.</p>
 
                     <!-- 작성중 안내 -->
-                    <p v-if="isDirty" class="text-xs text-orange-600 mb-3">작성 중인 내용이 있습니다. 새로고침하거나 페이지를 벗어나면 경고가 표시됩니다.</p>
+                    <p v-if="isDirty" class="text-sm text-orange-600 mb-3">작성 중인 내용이 있습니다. 새로고침하거나 페이지를 벗어나면 경고가 표시됩니다.</p>
 
                     <!-- =========================
                          승인된 지원계획 선택
                     ========================== -->
                     <div class="mb-4">
-                        <label class="block mb-1 text-sm font-medium">지원계획 선택</label>
+                        <label class="block mb-2 text-sm font-medium">지원계획 선택</label>
 
-                        <select v-model="selectedPlanNo" :disabled="isEditMode" class="w-full border rounded px-3 py-2 bg-gray-100">
+                        <select v-model="selectedPlanNo" :disabled="isEditMode" class="w-full border rounded px-3 py-2 bg-white">
                             <option value="">승인된 지원계획서를 선택해주세요.</option>
 
                             <option v-for="plan in approvedPlanOptions" :key="plan.support_plan_no" :value="String(plan.support_plan_no)" :disabled="plan.disabled">
@@ -727,11 +733,13 @@ watch(
                     <!-- 선택한 계획서 정보 -->
                     <div v-if="selectedPlanInfo || isEditMode" class="mb-6 border rounded-lg p-4 bg-blue-50">
                         <div class="font-semibold mb-2">현재 선택한 지원계획</div>
+
                         <div v-if="selectedPlanInfo">
                             <div class="text-sm">계획서 번호 {{ selectedPlanInfo.support_plan_no }}</div>
                             <div class="text-sm mt-1">제목 {{ selectedPlanInfo.plan_title }}</div>
                             <div class="text-sm mt-1">작성자 {{ selectedPlanInfo.writer_name }} / 작성일 {{ selectedPlanInfo.created_at }}</div>
                         </div>
+
                         <div v-else class="text-sm text-gray-600">수정 중인 결과서의 기준 지원계획입니다.</div>
                     </div>
 
@@ -744,24 +752,24 @@ watch(
 
                         <div v-if="draftList.length === 0" class="text-sm text-gray-500">임시저장된 결과가 없습니다.</div>
 
-                        <table v-else class="w-full text-sm">
+                        <table v-else class="w-full text-sm text-center border-collapse">
                             <thead>
-                                <tr class="border-b">
-                                    <th class="text-left py-2">제목</th>
-                                    <th class="text-left py-2">저장일</th>
-                                    <th class="text-center py-2">불러오기</th>
-                                    <th class="text-center py-2">삭제</th>
+                                <tr class="border-t-2 border-b-2 border-gray-300">
+                                    <th class="py-3 text-left">제목</th>
+                                    <th class="py-3 text-left">저장일</th>
+                                    <th class="py-3">불러오기</th>
+                                    <th class="py-3">삭제</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="draft in draftList" :key="draft.support_result_no_record" class="border-b">
-                                    <td class="py-2">{{ draft.record_title }}</td>
-                                    <td class="py-2">{{ draft.created_at }}</td>
-                                    <td class="py-2 text-center">
-                                        <button type="button" @click="loadDraft(draft.support_result_no_record)" class="bg-blue-400 hover:bg-blue-500 text-white px-3 py-1 rounded">불러오기</button>
+                                <tr v-for="draft in draftList" :key="draft.support_result_no_record" class="border-b border-gray-200 h-12 hover:bg-gray-50">
+                                    <td class="py-2 text-left">{{ draft.record_title }}</td>
+                                    <td class="py-2 text-left">{{ draft.created_at }}</td>
+                                    <td class="py-2">
+                                        <Button type="button" label="불러오기" class="p-button-sm" @click="loadDraft(draft.support_result_no_record)" />
                                     </td>
-                                    <td class="py-2 text-center">
-                                        <button type="button" @click="removeDraft(draft.support_result_no_record)" class="bg-red-400 hover:bg-red-500 text-white px-3 py-1 rounded">삭제</button>
+                                    <td class="py-2">
+                                        <Button type="button" label="삭제" class="p-button-sm" severity="danger" @click="removeDraft(draft.support_result_no_record)" />
                                     </td>
                                 </tr>
                             </tbody>
@@ -772,16 +780,16 @@ watch(
                          제목 입력
                     ========================== -->
                     <div class="mb-4">
-                        <label class="block mb-1 text-sm">제목</label>
-                        <input type="text" v-model="form.result_title" :disabled="!selectedPlanNo && !isEditMode" class="w-full border rounded px-3 py-2 bg-gray-100" />
+                        <label class="block mb-2 text-sm font-medium">제목</label>
+                        <InputText v-model="form.result_title" :disabled="!selectedPlanNo && !isEditMode" class="w-full" />
                     </div>
 
                     <!-- =========================
                          내용 입력
                     ========================== -->
                     <div class="mb-4">
-                        <label class="block mb-1 border-t pt-2 text-sm">내용</label>
-                        <textarea v-model="form.result_content" :disabled="!selectedPlanNo && !isEditMode" class="w-full border rounded px-3 py-2 bg-gray-100 h-32"></textarea>
+                        <label class="block mb-2 border-t pt-3 text-sm font-medium">내용</label>
+                        <Textarea v-model="form.result_content" :disabled="!selectedPlanNo && !isEditMode" class="w-full" rows="6" autoResize />
                     </div>
 
                     <!-- =========================
@@ -815,21 +823,20 @@ watch(
                             <li
                                 v-for="file in existingFiles"
                                 :key="file.file_no"
-                                class="flex items-center justify-between text-sm border rounded px-3 py-2"
+                                class="flex items-center justify-between text-sm border rounded px-3 py-2 bg-white"
                                 :class="{
                                     'bg-red-50 line-through text-gray-400': deleteExistingFileNos.includes(file.file_no)
                                 }"
                             >
                                 <span>{{ file.file_name }}</span>
 
-                                <button
+                                <Button
                                     type="button"
+                                    :label="deleteExistingFileNos.includes(file.file_no) ? '삭제취소' : '삭제표시'"
+                                    class="p-button-sm"
+                                    :severity="deleteExistingFileNos.includes(file.file_no) ? 'secondary' : 'danger'"
                                     @click="toggleDeleteExistingFile(file.file_no)"
-                                    class="px-3 py-1 rounded text-white"
-                                    :class="deleteExistingFileNos.includes(file.file_no) ? 'bg-gray-400 hover:bg-gray-500' : 'bg-red-400 hover:bg-red-500'"
-                                >
-                                    {{ deleteExistingFileNos.includes(file.file_no) ? '삭제취소' : '삭제표시' }}
-                                </button>
+                                />
                             </li>
                         </ul>
 
@@ -844,16 +851,15 @@ watch(
                     </div>
 
                     <!-- 첨부파일 안내 문구 -->
-                    <p class="text-xs text-gray-500 mt-1 mb-3">
-                        {{ isEditMode ? '수정 모드에서는 새 파일을 추가할 수 있으며, 기존 파일은 삭제표시 후 수정 저장 시 반영됩니다.' : '임시저장 불러오기 시 첨부파일은 함께 복원되지 않으므로 필요하면 다시 선택해주세요.' }}
+                    <p class="text-xs mt-1 mb-3" :class="!isEditMode ? 'text-red-500 font-medium' : 'text-gray-500'">
+                        {{ isEditMode ? '수정 모드에서는 새 파일을 추가할 수 있으며, 기존 파일은 삭제표시 후 수정 저장 시 반영됩니다.' : '임시저장 시 첨부파일은 함께 저장되지 않습니다. 파일은 승인요청 또는 수정저장 시에만 반영됩니다.' }}
                     </p>
-
                     <!-- 현재 선택된 새 파일 목록 -->
                     <div v-if="form.files.length > 0" class="mb-6 text-sm text-gray-600">
                         <div class="font-medium mb-2">
                             {{ isEditMode ? '추가할 새 파일' : '선택된 파일' }}
                         </div>
-                        <ul class="list-disc pl-5">
+                        <ul class="list-disc pl-5 space-y-1">
                             <li v-for="file in form.files" :key="file.name + file.size">
                                 {{ file.name }}
                             </li>
@@ -863,17 +869,15 @@ watch(
                     <!-- =========================
                          버튼 영역
                     ========================== -->
-                    <div class="text-right flex justify-end gap-2">
+                    <div class="flex justify-end gap-2 mt-4">
                         <!-- 등록 모드에서만 임시저장 버튼 표시 -->
-                        <button v-if="!isEditMode" type="button" @click="saveDraft" class="bg-gray-400 hover:bg-gray-500 text-white px-6 py-2 rounded-full">임시저장</button>
+                        <Button v-if="!isEditMode" type="button" label="임시저장" class="p-button-sm" severity="secondary" @click="saveDraft" />
 
                         <!-- 수정 모드에서만 취소 버튼 표시 -->
-                        <button v-if="isEditMode" type="button" @click="cancelEditMode" class="bg-gray-400 hover:bg-gray-500 text-white px-6 py-2 rounded-full">수정취소</button>
+                        <Button v-if="isEditMode" type="button" label="수정취소" class="p-button-sm" severity="secondary" @click="cancelEditMode" />
 
                         <!-- 등록 / 수정 저장 버튼 -->
-                        <button type="button" @click="submit" class="bg-green-400 hover:bg-green-500 text-white px-6 py-2 rounded-full" :disabled="!selectedPlanNo && !isEditMode">
-                            {{ isEditMode ? '수정저장' : '승인요청' }}
-                        </button>
+                        <Button type="button" :label="isEditMode ? '수정저장' : '승인요청'" class="p-button-sm" @click="submit" :disabled="!selectedPlanNo && !isEditMode" />
                     </div>
                 </div>
             </div>
