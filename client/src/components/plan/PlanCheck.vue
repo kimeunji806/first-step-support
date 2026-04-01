@@ -216,27 +216,27 @@ onBeforeUnmount(() => {
 
 <template>
     <!-- 조회영역 전체 -->
-    <div class="flex flex-col h-full">
+    <div class="card h-full flex flex-col gap-4 min-h-0">
         <!-- 화면 제목 -->
-        <div class="font-semibold text-lg mb-4">지원계획 조회</div>
+        <div class="font-bold text-lg mb-2 border-b pb-2">지원계획 조회</div>
 
         <!-- 스크롤 영역 -->
-        <div class="max-h-[500px] overflow-y-auto pr-2">
+        <div class="max-h-[400px] overflow-y-auto pr-2">
             <!-- 데이터 없을 때 -->
-            <div v-if="list.length === 0" class="text-center text-gray-300 py-10">등록된 지원계획이 없습니다.</div>
+            <div v-if="list.length === 0" class="text-center text-gray-500 py-10">등록된 지원계획이 없습니다.</div>
 
             <!-- 데이터 있을 때 -->
             <div v-else>
                 <!-- 지원계획 목록 반복 출력 -->
-                <div v-for="(item, index) in list" :key="item.support_plan_no || index" class="mb-6 border rounded-lg p-4 bg-gray-50" :class="{ 'cursor-pointer hover:bg-blue-50': loginRole === 'e3' }" @click="selectPlanForAdmin(item)">
+                <div v-for="(item, index) in list" :key="item.support_plan_no || index" class="mb-6 border-b pb-4" :class="{ 'cursor-pointer hover:bg-blue-50/50 transition-colors': loginRole === 'e3' }" @click="selectPlanForAdmin(item)">
                     <!-- =========================
                             상단 정보
                     ========================== -->
-                    <div class="flex justify-between items-center mb-3">
+                    <div class="flex justify-between items-center mb-2">
                         <div class="font-semibold flex items-center gap-2">
                             <!-- 승인상태 -->
                             <span
-                                class="text-xs px-2 py-1 rounded"
+                                class="text-xs px-2 py-0.5 rounded shadow-sm"
                                 :class="{
                                     'bg-yellow-100 text-yellow-700': item.approval === 'a0',
                                     'bg-green-100 text-green-700': item.approval === 'a1',
@@ -247,7 +247,7 @@ onBeforeUnmount(() => {
                             </span>
 
                             <!-- 지원계획 번호 -->
-                            <div>지원계획 {{ item.support_plan_no }}</div>
+                            <span>지원계획 {{ item.support_plan_no }}</span>
                         </div>
 
                         <!-- 작성자 / 작성일 -->
@@ -266,15 +266,17 @@ onBeforeUnmount(() => {
                             내용
                     ========================== -->
                     <div class="border-b py-2 mb-2">
-                        <span class="mr-2 font-medium">내용</span>
-                        <span>{{ item.content }}</span>
+                        <div class="flex">
+                            <span class="mr-2 font-medium whitespace-nowrap">내용</span>
+                            <span class="text-gray-700">{{ item.content }}</span>
+                        </div>
                     </div>
 
                     <!-- =========================
                             첨부파일
                     ========================== -->
                     <div class="border-b py-2 mb-2">
-                        <div class="font-medium mb-1">첨부파일</div>
+                        <span class="mr-2 font-medium block mb-1">첨부파일</span>
 
                         <!-- support_plan_no 기준으로 파일 목록 조회/다운로드 -->
                         <PlanFileList :support-plan-no="item.support_plan_no" />
@@ -283,28 +285,29 @@ onBeforeUnmount(() => {
                     <!-- =========================
                             반려사유
                     ========================== -->
-                    <div class="py-2" v-if="item.approval === 'a2'">
-                        <span class="mr-2 font-medium">반려사유</span>
-                        <span>{{ item.rejection_reason }}</span>
+                    <div v-if="item.approval === 'a2'" class="py-2 mb-2 bg-red-50 px-2 rounded">
+                        <span class="mr-2 font-medium text-red-600 font-bold">반려사유</span>
+                        <span class="text-red-700">{{ item.rejection_reason }}</span>
                     </div>
 
                     <!-- =========================
                             수정이력 / 수정 / 삭제 버튼
                         ========================= -->
-                    <div class="flex justify-end gap-2 mt-3">
+                    <div class="mt-4 flex justify-end gap-2">
                         <!-- 수정이력 버튼 -->
-                        <button type="button" @click.stop="openPlanHistory(item)" class="bg-gray-400 hover:bg-gray-500 text-white px-4 py-1 rounded">수정이력</button>
+                        <Button type="button" label="수정이력" class="w-24 p-button-sm" @click.stop="openPlanHistory(item)" />
 
                         <!-- 수정 버튼 -->
-                        <button v-if="canShowEditButton(item)" type="button" @click.stop="editPlan(item.support_plan_no)" class="bg-blue-400 hover:bg-blue-500 text-white px-4 py-1 rounded">수정</button>
+                        <Button v-if="canShowEditButton(item)" type="button" label="수정" class="w-24 p-button-sm" @click.stop="editPlan(item.support_plan_no)" />
 
                         <!-- 삭제 버튼 -->
-                        <button v-if="canShowDeleteButton(item)" type="button" @click.stop="deletePlan(item.support_plan_no)" class="bg-red-400 hover:bg-red-500 text-white px-4 py-1 rounded">삭제</button>
+                        <Button v-if="canShowDeleteButton(item)" type="button" label="삭제" class="w-24 p-button-sm" severity="danger" @click.stop="deletePlan(item.support_plan_no)" />
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
     <Dialog v-model:visible="historyDialog" :modal="true" :closable="false" :dismissableMask="true" :style="{ width: '50vw' }">
         <template #header>
             <div class="w-full bg-indigo-500 text-white px-6 py-4 rounded-t-xl flex justify-between items-center">

@@ -6,6 +6,7 @@ const nodemailer = require("./nodemailer");
 app.use(cors());
 const port = 3000;
 const codeStore = require("./codeStore");
+const sysAdminInstitutionRouter = require("./routers/sysadmin_institution_router");
 
 // 미들웨어 등록 영역
 // body parser
@@ -107,3 +108,4 @@ app.use("/", fileRouter);
 
 const priorityRouter = require("./routers/priority_router");
 app.use("/", priorityRouter);
+app.use("/sysadmin/institutions", sysAdminInstitutionRouter); // 시스템관리자 기관관리

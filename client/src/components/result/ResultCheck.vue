@@ -221,140 +221,102 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-    <div class="flex flex-col h-full">
-        <!-- 화면 제목 -->
-        <div class="font-semibold text-lg mb-4">지원결과 조회</div>
+    <div class="card h-full flex flex-col gap-4">
+        <div class="font-bold text-lg mb-2 border-b pb-2">지원결과 조회</div>
 
-        <!-- 스크롤 영역 -->
-        <div class="max-h-[500px] overflow-y-auto pr-2">
-            <!-- 데이터 없을 때 -->
+        <div class="max-h-[400px] overflow-y-auto pr-2">
             <div v-if="list.length === 0" class="text-center text-gray-500 py-10">등록된 지원결과가 없습니다.</div>
 
-            <!-- 데이터 있을 때 -->
-            <div v-else>
-                <div v-for="item in list" :key="item.support_result_no" class="mb-6 border rounded-lg p-4 bg-gray-50" :class="{ 'cursor-pointer hover:bg-blue-50': loginRole === 'e3' }" @click="selectResultForAdmin(item)">
-                    <!-- =========================
-                         상단 정보
-                    ========================== -->
-                    <div class="flex justify-between items-center mb-3">
-                        <div class="font-semibold flex items-center gap-2">
-                            <!-- 승인상태 -->
-                            <span
-                                class="text-xs px-2 py-1 rounded"
-                                :class="{
-                                    'bg-yellow-100 text-yellow-700': item.approval === 'a0',
-                                    'bg-green-100 text-green-700': item.approval === 'a1',
-                                    'bg-red-100 text-red-700': item.approval === 'a2'
-                                }"
-                            >
-                                {{ item.approval_name }}
-                            </span>
-
-                            <!-- 결과서 번호 -->
-                            <div>지원결과 {{ item.support_result_no }}</div>
-                        </div>
-
-                        <!-- 작성자 / 작성일 -->
-                        <div class="text-sm text-gray-600">작성자 {{ item.name }} &nbsp; 작성일 {{ item.created_at }}</div>
+            <div v-else v-for="(item, index) in list" :key="index" class="mb-6 border-b pb-4" :class="{ 'cursor-pointer hover:bg-blue-50/50 transition-colors': loginRole === 'e3' }" @click="selectResultForAdmin(item)">
+                <div class="flex justify-between items-center mb-2">
+                    <div class="font-semibold flex items-center gap-2">
+                        <span
+                            class="text-xs px-2 py-0.5 rounded shadow-sm"
+                            :class="{
+                                'bg-yellow-100 text-yellow-700': item.approval === 'a0',
+                                'bg-green-100 text-green-700': item.approval === 'a1',
+                                'bg-red-100 text-red-700': item.approval === 'a2'
+                            }"
+                        >
+                            {{ item.approval_name }}
+                        </span>
+                        <span>지원결과 {{ index + 1 }}</span>
                     </div>
+                    <div class="text-sm text-gray-600">작성자 {{ item.name }} &nbsp; 작성일 {{ item.created_at }}</div>
+                </div>
 
-                    <!-- =========================
-                         연결된 계획서 번호
-                    ========================== -->
-                    <div class="border-t border-b py-2 mb-2">
-                        <span class="mr-2 font-medium">지원계획</span>
-                        <span>지원계획 {{ item.support_plan_no }}</span>
+                <div class="border-t border-b py-2 mb-2">
+                    <span class="mr-2 font-medium">지원계획</span>
+                    <span>지원계획 {{ item.support_plan_no }}</span>
+                </div>
+
+                <div class="border-b py-2 mb-2">
+                    <span class="mr-2 font-medium">제목</span>
+                    <span>{{ item.title }}</span>
+                </div>
+
+                <div class="border-b py-2 mb-2">
+                    <div class="flex">
+                        <span class="mr-2 font-medium whitespace-nowrap">내용</span>
+                        <span class="text-gray-700">{{ item.content }}</span>
                     </div>
+                </div>
 
-                    <!-- =========================
-                         제목
-                    ========================== -->
-                    <div class="border-b py-2 mb-2">
-                        <span class="mr-2 font-medium">제목</span>
-                        <span>{{ item.title }}</span>
-                    </div>
+                <div class="border-b py-2 mb-2">
+                    <span class="mr-2 font-medium">종결 여부</span>
+                    <span :class="Number(item.finish) === 1 ? 'text-blue-600 font-bold' : ''">
+                        {{ Number(item.finish) === 1 ? '종결' : '미종결' }}
+                    </span>
+                </div>
 
-                    <!-- =========================
-                         내용
-                    ========================== -->
-                    <div class="border-b py-2 mb-2">
-                        <span class="mr-2 font-medium">내용</span>
-                        <span>{{ item.content }}</span>
-                    </div>
+                <div class="border-b py-2 mb-2">
+                    <span class="mr-2 font-medium block mb-1">첨부 파일</span>
+                    <ResultFileList :support-result-no="item.support_result_no" />
+                </div>
 
-                    <!-- =========================
-                         종결 여부
-                    ========================== -->
-                    <div class="border-b py-2 mb-2">
-                        <span class="mr-2 font-medium">종결 여부</span>
-                        <span>{{ Number(item.finish) === 1 ? '종결' : '미종결' }}</span>
-                    </div>
+                <div v-if="item.approval === 'a2'" class="py-2 mb-2 bg-red-50 px-2 rounded">
+                    <span class="mr-2 font-medium text-red-600 font-bold">반려사유</span>
+                    <span class="text-red-700">{{ item.rejection_reason }}</span>
+                </div>
 
-                    <!-- =========================
-                         첨부파일
-                    ========================== -->
-                    <div class="border-b py-2 mb-2">
-                        <div class="font-medium mb-1">첨부파일</div>
-                        <ResultFileList :support-result-no="item.support_result_no" />
-                    </div>
+                <div class="mt-4 flex justify-end gap-2">
+                    <Button type="button" label="수정이력" class="w-24 p-button-sm" @click.stop="openResultHistory(item)" />
 
-                    <!-- =========================
-                         반려사유
-                    ========================== -->
-                    <div class="py-2" v-if="item.approval === 'a2'">
-                        <span class="mr-2 font-medium">반려사유</span>
-                        <span>{{ item.rejection_reason }}</span>
-                    </div>
+                    <Button v-if="canShowEditButton(item)" type="button" label="수정" class="w-24 p-button-sm" @click.stop="editResult(item.support_result_no)" />
 
-                    <!-- =========================
-                        수정이력 / 수정 / 삭제 버튼
-                        ========================= -->
-                    <div class="flex justify-end gap-2 mt-3">
-                        <!-- 수정이력 버튼 -->
-                        <button type="button" @click.stop="openResultHistory(item)" class="bg-gray-400 hover:bg-gray-500 text-white px-4 py-1 rounded">수정이력</button>
-
-                        <!-- 수정 버튼 -->
-                        <button v-if="canShowEditButton(item)" type="button" @click.stop="editResult(item.support_result_no)" class="bg-blue-400 hover:bg-blue-500 text-white px-4 py-1 rounded">수정</button>
-
-                        <!-- 삭제 버튼 -->
-                        <button v-if="canShowDeleteButton(item)" type="button" @click.stop="deleteResult(item.support_result_no)" class="bg-red-400 hover:bg-red-500 text-white px-4 py-1 rounded">삭제</button>
-                    </div>
+                    <Button v-if="canShowDeleteButton(item)" type="button" label="삭제" class="w-24 p-button-sm" severity="danger" @click.stop="deleteResult(item.support_result_no)" />
                 </div>
             </div>
         </div>
-    </div>
-    <Dialog v-model:visible="historyDialog" :modal="true" :closable="false" :dismissableMask="true" :style="{ width: '50vw' }">
-        <template #header>
-            <div class="w-full bg-indigo-500 text-white px-6 py-4 rounded-t-xl flex justify-between items-center">
-                <span class="text-lg font-medium">
-                    {{ historyDialogTitle }}
-                </span>
 
-                <button @click="historyDialog = false" class="text-white text-2xl font-light hover:opacity-70">✕</button>
+        <Dialog v-model:visible="historyDialog" :modal="true" :closable="false" :dismissableMask="true" :style="{ width: '50vw' }">
+            <template #header>
+                <div class="w-full bg-indigo-500 text-white px-6 py-4 rounded-t-xl flex justify-between items-center">
+                    <span class="text-lg font-medium">{{ historyDialogTitle }}</span>
+                    <button @click="historyDialog = false" class="text-white text-2xl font-light hover:opacity-70">✕</button>
+                </div>
+            </template>
+
+            <div v-if="historyData.length === 0" class="text-center py-10 text-gray-400">수정이력 없음</div>
+
+            <div v-else class="px-4 py-6">
+                <table class="w-full text-center border-collapse">
+                    <thead>
+                        <tr class="border-t-2 border-b-2 border-gray-400">
+                            <th class="py-3">수정날짜</th>
+                            <th class="py-3">작성자</th>
+                            <th class="py-3">권한</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(hItem, hIdx) in historyData" :key="hIdx" class="border-b border-gray-400 h-12 hover:bg-gray-50">
+                            <td>{{ hItem.created_at }}</td>
+                            <td>{{ hItem.writer }}</td>
+                            <td>{{ hItem.role }}</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-        </template>
-
-        <!-- 내용 -->
-        <div v-if="historyData.length === 0" class="text-center py-10 text-gray-400">수정이력 없음</div>
-
-        <div v-else class="px-4 py-6">
-            <table class="w-full text-center border-collapse">
-                <thead>
-                    <tr class="border-t-2 border-b-2 border-gray-400">
-                        <th class="py-3">수정날짜</th>
-                        <th class="py-3">작성자</th>
-                        <th class="py-3">권한</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    <tr v-for="item in historyData" :key="item.history_no || item.support_result_no_record || item.created_at" class="border-b border-gray-400 h-12 hover:bg-gray-50">
-                        <td>{{ item.created_at }}</td>
-                        <td>{{ item.writer }}</td>
-                        <td>{{ item.role }}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </Dialog>
+        </Dialog>
+    </div>
 </template>

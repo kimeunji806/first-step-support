@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, shallowRef, onBeforeMount } from 'vue';
+import { ref, computed, shallowRef, onBeforeMount, onMounted, onBeforeUnmount } from 'vue';
 import { RouterLink, RouterView } from 'vue-router';
 
 import counselForm from '@/components/counsel/CounselForm.vue';
@@ -29,9 +29,33 @@ const dropdownValues = [
 const dropdownValue = shallowRef(null);
 //확인버튼으로 불러오게 했음
 const selectedForm = shallowRef(null);
-const confirmForm = () => {
-    selectedForm.value = dropdownValue.value;
+// 코드값으로 오른쪽 폼을 여는 공통 함수
+// A: 상담기록, B: 우선순위, C: 지원계획, D: 지원결과
+const openFormByCode = (code) => {
+    const target = dropdownValues.find((item) => item.code === code);
+
+    if (!target) {
+        return;
+    }
+
+    // 셀렉트 값도 같이 맞춰줌
+    dropdownValue.value = target;
+
+    // 오른쪽에 실제 렌더될 폼
+    selectedForm.value = target;
 };
+
+// 확인 버튼 클릭 시 선택한 폼 열기
+const confirmForm = () => {
+    if (!dropdownValue.value) {
+        return;
+    }
+
+    openFormByCode(dropdownValue.value.code);
+};
+// const confirmForm = () => {
+//     selectedForm.value = dropdownValue.value;
+// };
 
 import { useRoute } from 'vue-router';
 const route = useRoute();
@@ -40,7 +64,36 @@ const selectNo = Number(route.params.no);
 const user = ref([]);
 const isLoading = ref(true);
 console.log(selectNo);
+// 기관관리자(e3)가 왼쪽 지원계획 문서를 클릭하면
+// 오른쪽 지원계획 결재폼을 자동으로 열기
+const handleAdminPlanSelectForOpen = () => {
+    if (loginRole !== 'e3') {
+        return;
+    }
 
+    openFormByCode('C');
+};
+
+// 기관관리자(e3)가 왼쪽 지원결과 문서를 클릭하면
+// 오른쪽 지원결과 결재폼을 자동으로 열기
+const handleAdminResultSelectForOpen = () => {
+    if (loginRole !== 'e3') {
+        return;
+    }
+
+    openFormByCode('D');
+};
+// 담당자가 지원계획 수정 버튼 클릭 시
+// 오른쪽 지원계획 입력폼 자동 오픈
+const handlePlanEditModeForOpen = () => {
+    openFormByCode('C');
+};
+
+// 담당자가 지원결과 수정 버튼 클릭 시
+// 오른쪽 지원결과 입력폼 자동 오픈
+const handleResultEditModeForOpen = () => {
+    openFormByCode('D');
+};
 onBeforeMount(async () => {
     try {
         const resp = await fetch(`/api/beneficiaries/${selectNo}`);
@@ -57,6 +110,24 @@ onBeforeMount(async () => {
     } finally {
         isLoading.value = false;
     }
+});
+onMounted(() => {
+    // 기관관리자일 때만 자동 오픈 이벤트 연결
+    if (loginRole === 'e3') {
+        window.addEventListener('admin-plan-select', handleAdminPlanSelectForOpen);
+        window.addEventListener('admin-result-select', handleAdminResultSelectForOpen);
+    }
+    window.addEventListener('plan-edit-mode', handlePlanEditModeForOpen);
+    window.addEventListener('result-edit-mode', handleResultEditModeForOpen);
+});
+
+onBeforeUnmount(() => {
+    if (loginRole === 'e3') {
+        window.removeEventListener('admin-plan-select', handleAdminPlanSelectForOpen);
+        window.removeEventListener('admin-result-select', handleAdminResultSelectForOpen);
+    }
+    window.removeEventListener('plan-edit-mode', handlePlanEditModeForOpen);
+    window.removeEventListener('result-edit-mode', handleResultEditModeForOpen);
 });
 // 임시 데이터
 // 나중에는 선택된 대상자/조사지 상세 조회값으로 교체
