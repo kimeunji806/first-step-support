@@ -55,6 +55,15 @@ router.beforeEach((to, from, next) => {
     if (userStore.role !== 'e3' && to.path === '/auth/approval') {
         return next('/'); // 이 루트가 회원가입으로 되어있음 나중에 페이지 만들면 경로 수정
     }
+    if (userStore.role == 'e1' && to.path === '/') {
+        return next('/dashboard_user'); // 일반사용자 로그인시 일반사용자의 지원신청내역으로 이동
+
+    }
+    if (userStore.role == 'e4' && to.path === '/') {
+        return next('/sysadmin/institution-list'); // 시스템 관리자 로그인시 /로 안가고 기관목록으로 이동
+        
+    }
+
 
     // 승인된 유저가 승인대기 접근 막기
     if (userStore.approval === 1 && to.path === '/sign/access') {
