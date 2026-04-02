@@ -15,6 +15,7 @@ import { useUserStore } from '@/stores/user';
 
 const userStore = useUserStore();
 const user_role = userStore.role;
+
 // 오른쪽에서 담당자 지정할 때 쓸 컴포넌트
 import ManagerAssignForm from '@/components/common/ManagerAssignForm.vue';
 
@@ -94,6 +95,10 @@ const handlePlanEditModeForOpen = () => {
 const handleResultEditModeForOpen = () => {
     openFormByCode('D');
 };
+const handleCounselEditModeForOpen = () => {
+    openFormByCode('A'); // 상담기록
+};
+
 onBeforeMount(async () => {
     try {
         const resp = await fetch(`/api/beneficiaries/${selectNo}`);
@@ -119,6 +124,7 @@ onMounted(() => {
     }
     window.addEventListener('plan-edit-mode', handlePlanEditModeForOpen);
     window.addEventListener('result-edit-mode', handleResultEditModeForOpen);
+    window.addEventListener('counsel-edit-mode', handleCounselEditModeForOpen);
 });
 
 onBeforeUnmount(() => {
@@ -128,6 +134,7 @@ onBeforeUnmount(() => {
     }
     window.removeEventListener('plan-edit-mode', handlePlanEditModeForOpen);
     window.removeEventListener('result-edit-mode', handleResultEditModeForOpen);
+    window.removeEventListener('counsel-edit-mode', handleCounselEditModeForOpen);
 });
 // 임시 데이터
 // 나중에는 선택된 대상자/조사지 상세 조회값으로 교체

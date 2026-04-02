@@ -29,7 +29,10 @@ const getLoginUser = () => {
     return JSON.parse(localStorage.getItem('user'));
 };
 
+<<<<<<< HEAD
 //신청서 번호랑 대상자 번호 필요하면 담당자 번호도 넘겨서 해당 값들과 일치하는 계획 들고와서 모달안에 넣기
+=======
+>>>>>>> b861cd3df875c84c5ea43b18558610fc00eb3af8
 const planModalBtn = async (row) => {
     const surNo = row.survey_no;
     try {
@@ -52,10 +55,13 @@ const planModalBtn = async (row) => {
     }
 };
 
+<<<<<<< HEAD
 const filteredApprovalForm = computed(() => {
     return planList.value.filter((item) => item.approval === 'a1');
 });
 
+=======
+>>>>>>> b861cd3df875c84c5ea43b18558610fc00eb3af8
 const loadResultList = async (row) => {
     const surNo = row.survey_no;
     try {
@@ -63,10 +69,19 @@ const loadResultList = async (row) => {
         const text = await resp.text();
         const data = text ? JSON.parse(text) : [];
 
+<<<<<<< HEAD
         resultList.value = (Array.isArray(data) ? data : []).map((item) => ({
             ...item,
             files: item.filename ? item.filename.split(',').map((f) => f.trim()) : []
         }));
+=======
+        resultList.value = (Array.isArray(data) ? data : [])
+            .filter((item) => item.finish === 1) //종결건만 조회
+            .map((item) => ({
+                ...item,
+                files: item.filename ? item.filename.split(',').map((f) => f.trim()) : []
+            }));
+>>>>>>> b861cd3df875c84c5ea43b18558610fc00eb3af8
     } catch (err) {
         console.error('지원결과 조회 에러:', err);
         resultList.value = [];
@@ -196,10 +211,17 @@ onBeforeMount(async () => {
             </div>
 
             <div class="max-h-[500px] overflow-y-auto p-4 bg-white">
+<<<<<<< HEAD
                 <div v-if="filteredApprovalForm.length === 0" class="text-center py-6 text-gray-400">데이터 없음</div>
 
                 <div v-else class="flex flex-col gap-6">
                     <div v-for="(item, index) in filteredApprovalForm" :key="item.plan_no" class="border rounded-xl overflow-hidden bg-white shadow-sm">
+=======
+                <div v-if="planList.length === 0" class="text-center py-6 text-gray-400">데이터 없음</div>
+
+                <div v-else class="flex flex-col gap-6">
+                    <div v-for="(item, index) in planList" :key="item.plan_no" class="border rounded-xl overflow-hidden bg-white shadow-sm">
+>>>>>>> b861cd3df875c84c5ea43b18558610fc00eb3af8
                         <div class="flex justify-between items-center px-4 py-3 border-b">
                             <div class="font-semibold">계획 {{ String(index + 1).padStart(2, '0') }}</div>
 
@@ -255,10 +277,17 @@ onBeforeMount(async () => {
 
             <!-- 📦 내용 -->
             <div class="max-h-[500px] overflow-y-auto p-4 bg-white">
+<<<<<<< HEAD
                 <div v-if="filteredApprovalForm_re.length === 0" class="text-center py-6 text-gray-400">데이터 없음</div>
 
                 <div v-else class="flex flex-col gap-6">
                     <div v-for="(item, index) in filteredApprovalForm_re" :key="item.result_no" class="border rounded-xl overflow-hidden bg-white shadow-sm">
+=======
+                <div v-if="resultList.length === 0" class="text-center py-6 text-gray-400">데이터 없음</div>
+
+                <div v-else class="flex flex-col gap-6">
+                    <div v-for="(item, index) in resultList" :key="item.result_no" class="border rounded-xl overflow-hidden bg-white shadow-sm">
+>>>>>>> b861cd3df875c84c5ea43b18558610fc00eb3af8
                         <!-- 상단 -->
                         <div class="flex justify-between items-center px-4 py-3 border-b">
                             <div class="font-semibold">결과 {{ String(index + 1).padStart(2, '0') }}</div>
