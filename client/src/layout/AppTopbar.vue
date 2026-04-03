@@ -53,7 +53,7 @@ const userName = computed(() => userStore.user_name || '');
                     </g>
                 </svg>
 
-                <span>발달장애인 지원프로그램</span>
+                <span class="w-100">발달장애인 지원프로그램</span>
             </router-link>
         </div>
 
