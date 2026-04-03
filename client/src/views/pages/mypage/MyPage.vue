@@ -160,59 +160,50 @@ function goToWithdraw() {
 </script>
 
 <template>
-    <div class="flex h-screen">
+    <div class="flex flex-col md:flex-row gap-8 h-full">
         <!-- 왼쪽 패널 -->
-        <div class="w-64 bg-green-100 p-4 flex flex-col">
-            <!-- 상단 정보 -->
-            <div class="flex justify-between items-start mb-4">
-                <div>
-                    <div class="text-sm text-gray-700">보호자</div>
+        <div class="md:w-2/8 h-full">
+            <div class="card h-full flex flex-col gap-4">
+                <!-- 상단 정보 -->
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <div class="text-sm text-gray-700">보호자</div>
+                    </div>
+
+                    <button type="button" class="text-sm text-gray-500 hover:text-gray-700" @click="goToMyInfo">정보보기</button>
                 </div>
 
-                <button type="button" class="text-sm text-gray-500 hover:text-gray-700" @click="goToMyInfo">정보보기</button>
-            </div>
+                <!-- 인사말 -->
+                <div class="mb-4">
+                    <div class="text-xl font-semibold text-gray-800 mb-1">{{ loginUserName }}님 반갑습니다</div>
+                </div>
 
-            <!-- 인사말 -->
-            <div class="mb-4">
-                <div class="text-xl font-semibold text-gray-800 mb-1">{{ loginUserName }}님 반갑습니다</div>
-            </div>
-
-            <!-- 왼쪽 목록 -->
-            <div class="flex-1 min-h-0">
-                <TargetList :targets="targets" :selectedId="selectedId" @select="selectTarget" @add="addTarget" />
+                <!-- 왼쪽 목록 -->
+                <div class="flex-1 min-h-0">
+                    <TargetList :targets="targets" :selectedId="selectedId" @select="selectTarget" @add="addTarget" />
+                </div>
+                <div class="mt-6 text-right">
+                    <Button label="회원탈퇴" class="w-full" severity="danger" @click="goToWithdraw" />
+                </div>
             </div>
         </div>
 
         <!-- 오른쪽 상세 -->
-        <div class="flex-1 p-10 bg-gray-100">
-            <div class="bg-white p-8 rounded shadow h-full flex flex-col">
+
+        <div class="md:w-6/8 h-full">
+            <div class="card h-full flex flex-col gap-4">
                 <div class="flex-1 min-h-0">
-                   
-                <h2 class="mb-6 text-xl font-semibold text-gray-800">
-                    {{ isMyInfoMode ? '내 정보' : isCreateMode ? '지원대상자 등록' : selectedTarget?.name || '지원대상자 정보' }}
-                </h2>
+                    <h2 class="mb-6 text-xl font-semibold text-gray-800">
+                        {{ isMyInfoMode ? '내 정보' : isCreateMode ? '지원대상자 등록' : selectedTarget?.name || '지원대상자 정보' }}
+                    </h2>
 
-                <div class="flex-1 min-h-0">
-                    <MyPageInfo v-if="isMyInfoMode" />
+                    <div class="flex-1 min-h-0">
+                        <MyPageInfo v-if="isMyInfoMode" />
 
-                    <TargetDetail v-else :target="selectedTarget" :isCreateMode="isCreateMode" @created="createTarget" @updated="updateTarget" />
-                </div>
-
-                <div class="mt-6 text-right">
-                    <Button label="회원탈퇴" severity="danger" outlined @click="goToWithdraw" />
+                        <TargetDetail v-else :target="selectedTarget" :isCreateMode="isCreateMode" @created="createTarget" @updated="updateTarget" />
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </template>
-
-<style scoped lang="scss">
-:deep(.p-datatable) {
-    border: 0 none;
-}
-
-.bg-primary\! {
-    background-color: var(--p-primary-color) !important;
-    color: var(--p-primary-contrast-color) !important;
-}
-</style>
