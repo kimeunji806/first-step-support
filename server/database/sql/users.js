@@ -1,9 +1,5 @@
 const { pool } = require("../DAO");
 
-const selectAllUser = `
-SELECT * FROM t_board;
-`;
-
 const insertUser = `
 INSERT INTO user (role, user_name, user_id, user_pw, email, tel, address, institution_no)
 VALUES(?,?, ?, ?, ?, ?, ?,?)
@@ -105,7 +101,6 @@ WHERE user_id = ?
 `;
 
 module.exports = {
-  selectAllUser,
   loginUser,
   approval,
   insertUser,
