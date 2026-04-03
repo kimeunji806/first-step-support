@@ -176,22 +176,25 @@ onBeforeMount(() => {
 </script>
 
 <template>
-    <div class="flex h-screen">
-        <div class="w-64 bg-green-100 p-4">
-            <div class="flex justify-between mb-4">
-                <h3>담당자 목록</h3>
-                <span>{{ managerList.length }}명</span>
-            </div>
+    <div class="flex flex-col md:flex-row gap-8 h-full">
+        <div class="md:w-2/8 h-full">
+            <div class="card h-full flex flex-col gap-4">
+                <div class="flex justify-between mb-4">
+                    <h3>담당자 목록</h3>
+                    <span>{{ managerList.length }}명</span>
+                </div>
 
-            <div v-for="user in managerList" :key="user.user_id" class="p-3 border-b cursor-pointer hover:bg-green-200" @click="selectUser(user)">
-                {{ user.name }}
-            </div>
+                <div v-for="user in managerList" :key="user.user_id" class="p-3 border-b cursor-pointer hover:bg-green-200" @click="selectUser(user)">
+                    {{ user.name }}
+                </div>
 
-            <button class="mt-4 w-full bg-green-400 text-white py-2 rounded" @click="createUser">기관담당자 등록</button>
+                <!-- <button class="mt-4 w-full bg-green-400 text-white py-2 rounded" @click="createUser">기관담당자 등록</button> -->
+                <Button @click="createUser" class="w-full" label="기관담당자 등록" />
+            </div>
         </div>
 
-        <div class="flex-1 p-10 bg-gray-100">
-            <div class="bg-white p-8 rounded shadow">
+        <div class="md:w-6/8 h-full">
+            <div class="card h-full flex flex-col gap-4">
                 <h2 class="mb-6 text-xl">
                     {{ isCreateMode ? '담당자 등록' : isEditMode ? '담당자 수정' : selectedUser?.name || '담당자 정보' }}
                 </h2>
@@ -312,11 +315,15 @@ onBeforeMount(() => {
 
                 <!-- 버튼 -->
                 <div class="mt-6 text-right space-x-2">
-                    <button v-if="!isEditMode && !isCreateMode" @click="editUser" class="bg-green-400 hover:bg-green-500 text-white px-5 py-2 rounded-lg">수정</button>
+                    <Button v-if="!isEditMode && !isCreateMode" @click="editUser" label="수정" class="w-24" />
+                    <Button v-else-if="isEditMode" @click="saveUser" label="저장" class="w-24" />
+                    <Button v-else @click="insertUser" label="등록" class="w-24" />
 
-                    <button v-else-if="isEditMode" @click="saveUser" class="bg-blue-400 hover:bg-blue-500 text-white px-5 py-2 rounded-lg">저장</button>
+                    <!-- <button v-if="!isEditMode && !isCreateMode" @click="editUser" class="bg-green-400 hover:bg-green-500 text-white px-5 py-2 rounded-lg">수정</button> -->
 
-                    <button v-else @click="insertUser" class="bg-purple-400 hover:bg-purple-500 text-white px-5 py-2 rounded-lg">등록</button>
+                    <!-- <button v-else-if="isEditMode" @click="saveUser" class="bg-blue-400 hover:bg-blue-500 text-white px-5 py-2 rounded-lg">저장</button> -->
+
+                    <!-- <button v-else @click="insertUser" class="bg-purple-400 hover:bg-purple-500 text-white px-5 py-2 rounded-lg">등록</button> -->
                 </div>
             </div>
         </div>

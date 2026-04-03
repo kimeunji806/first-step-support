@@ -192,16 +192,10 @@ function goToWithdraw() {
 
         <div class="md:w-6/8 h-full">
             <div class="card h-full flex flex-col gap-4">
-        
-                    <div class="flex-1 min-h-0">
-                        <MyPageInfo v-if="isMyInfoMode" />
+                <div class="flex-1 min-h-0">
+                    <MyPageInfo v-if="isMyInfoMode" />
 
-                        <TargetDetail v-else :target="selectedTarget" :isCreateMode="isCreateMode" @created="createTarget" @updated="updateTarget" />
-                    </div>
-
-                    <div class="mt-6 text-right">
-                        <Button label="회원탈퇴" severity="danger" outlined @click="goToWithdraw" />
-                    </div>
+                    <TargetDetail v-else :target="selectedTarget" :isCreateMode="isCreateMode" @created="createTarget" @updated="updateTarget" />
                 </div>
             </div>
         </div>

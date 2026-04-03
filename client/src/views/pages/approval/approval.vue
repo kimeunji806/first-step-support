@@ -92,7 +92,7 @@ const filters = ref({
             <Column field="created_at" header="가입일"></Column>
             <Column field="approval" header="사용승인">
                 <template #body="slotProps">
-                    <Button label="승인" severity="success" size="small" @click="approvalAcess" />
+                    <Button label="승인" size="small" @click="approvalAcess" />
                 </template>
             </Column>
             <Column field="refuse" header="반려">
