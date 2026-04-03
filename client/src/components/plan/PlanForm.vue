@@ -704,7 +704,7 @@ watch(
 
                             <Button
                                 type="button"
-                                :label="deleteExistingFileNos.includes(file.file_no) ? '삭제취소' : '삭제표시'"
+                                :label="deleteExistingFileNos.includes(file.file_no) ? '삭제취소' : '삭제'"
                                 class="p-button-sm"
                                 :severity="deleteExistingFileNos.includes(file.file_no) ? 'secondary' : 'danger'"
                                 @click="toggleDeleteExistingFile(file.file_no)"
