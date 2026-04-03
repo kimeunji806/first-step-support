@@ -37,7 +37,7 @@ const MENU = {
     // 시스템관리자 메뉴
     SURVEY: { label: '지원신청서 관리', to: '/survey', icon: 'pi pi-file-edit' },
     INSTITUTIONLIST: { label: '기관목록', to: '/sysadmin/institutions', icon: 'pi pi-home' },
-    ADMIN: { label: '관리자 조회', to: '/info/admin', icon: 'pi pi-id-card' }
+    ADMIN: { label: '관리자 조회', to: '/sysadmin/admins', icon: 'pi pi-id-card' }
 };
 
 const model = computed(() => {
