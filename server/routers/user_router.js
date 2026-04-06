@@ -20,7 +20,6 @@ router.get("/approval/:no", async (req, res) => {
   let result = await userService.approvalAccess(insNo);
   res.send(result);
 });
-
 router.get("/admin-approval", async (req, res) => {
   let result = await userService.approvalByAdminAccess();
   res.send(result);
