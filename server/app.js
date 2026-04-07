@@ -80,7 +80,7 @@ app.use("/api", institutionRouter);
 const mypageRouter = require("./routers/mypage_router"); //마이페이지 지원대상자
 app.use("/api/mypage", mypageRouter);
 const institutionMyPageRouter = require("./routers/institution_mypage_router"); //마이페이지 기관담당자
-app.use("/institutionmypage", institutionMyPageRouter);
+app.use("/api/institutionmypage", institutionMyPageRouter);
 const infoRouter = require("./routers/info_router");
 app.use("/api", infoRouter);
 const counselRouter = require("./routers/counsel_router");
@@ -112,14 +112,14 @@ app.use("/api/sysadmin/institutions", sysAdminInstitutionRouter); // 시스템�
 
 
 const path = require('path');
-const publicPath = path.join(__dirname, 'dist');
+const publicPath = path.join(__dirname, 'public');
 app.use(express.static(publicPath));
 
 app.get("/", function (req, res, next) {
-  res.sendFile(path.join(__dirname, "./dist", "index.html"));
+  res.sendFile(path.join(__dirname, "./public", "index.html"));
 });
 
 
 app.use((req, res) => {
-  res.status(404).sendFile(path.join(__dirname, "./dist", "index.html"));
+  res.status(404).sendFile(path.join(__dirname, "./public", "index.html"));
 });
