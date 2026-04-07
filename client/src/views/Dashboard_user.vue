@@ -262,13 +262,11 @@ const filters = ref({
     </Dialog>
     <Dialog v-model:visible="resultDialog" :modal="true" :closable="false" :dismissableMask="true" :style="{ width: '700px' }" :showHeader="false">
         <div class="rounded-xl overflow-hidden">
-            <!-- 🔵 헤더 -->
             <div class="bg-blue-500 text-white px-5 py-4 mt-7 flex justify-between items-center rounded-t-xl">
                 <div class="text-lg font-semibold">지원결과</div>
                 <button @click="resultDialog = false" class="text-white text-xl hover:opacity-70 transition">✕</button>
             </div>
 
-            <!-- 📦 내용 -->
             <div class="max-h-[500px] overflow-y-auto p-4 bg-white">
                 <div v-if="filteredApprovalForm_re.length === 0" class="text-center py-6 text-gray-400">데이터 없음</div>
 
@@ -322,5 +320,9 @@ const filters = ref({
     font-weight: bold;
     padding: 2px 4px;
     border-radius: 4px;
+}
+
+:deep(.p-datatable .p-datatable-tbody > tr > td) {
+    text-align: center;
 }
 </style>

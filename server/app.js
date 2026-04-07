@@ -2,7 +2,7 @@ require("dotenv").config({ path: "./database/dbConfig.env" });
 const express = require("express");
 const cors = require("cors");
 const app = express();
-const nodemailer = require("./nodemailer");
+const nodemailer = require("./mailer");
 app.use(cors());
 const port = 3000;
 const codeStore = require("./codeStore");
@@ -24,9 +24,9 @@ app.listen(port, () => {
 
 // 라우팅 등록 영역
 // - 기본 라우팅
-app.get("/", (req, res) => {
-  res.send("Welcome!!");
-});
+// app.get("/", (req, res) => {
+//   res.send("Welcome!!");
+// });
 
 app.post("/mail", async (req, res) => {
   const { email } = req.body;
@@ -109,3 +109,17 @@ app.use("/", fileRouter);
 const priorityRouter = require("./routers/priority_router");
 app.use("/", priorityRouter);
 app.use("/sysadmin/institutions", sysAdminInstitutionRouter); // 시스템관리자 기관관리
+
+
+const path = require('path');
+const publicPath = path.join(__dirname, 'dist');
+app.use(express.static(publicPath));
+
+app.get("/", function (req, res, next) {
+  res.sendFile(path.join(__dirname, "./dist", "index.html"));
+});
+
+
+app.use((req, res) => {
+  res.status(404).sendFile(path.join(__dirname, "./dist", "index.html"));
+});
