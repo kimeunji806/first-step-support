@@ -42,7 +42,7 @@ app.post("/api/mail", async (req, res) => {
   }
 });
 
-app.post("/verify", (req, res) => {
+app.post("/api/verify", (req, res) => {
   const { user_email, code } = req.body;
   try {
     const data = codeStore.get(user_email);
