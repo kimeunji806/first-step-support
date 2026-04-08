@@ -114,13 +114,13 @@ app.use("/api", priorityRouter);
 app.use("/api/sysadmin/institutions", sysAdminInstitutionRouter); // 시스템관리자 기관관리
 
 const path = require("path");
-const publicPath = path.join(__dirname, "dist");
+const publicPath = path.join(__dirname, "public");
 app.use(express.static(publicPath));
 
 app.get("/", function (req, res, next) {
-  res.sendFile(path.join(__dirname, "./dist", "index.html"));
+  res.sendFile(path.join(__dirname, "./public", "index.html"));
 });
 
 app.use((req, res) => {
-  res.status(404).sendFile(path.join(__dirname, "./dist", "index.html"));
+  res.status(404).sendFile(path.join(__dirname, "./public", "index.html"));
 });
