@@ -65,8 +65,8 @@ onBeforeMount(async () => {
 });
 </script>
 <template>
-    <div class="p-6 bg-slate-100 min-h-full">
-        <div class="max-w-2xl mx-auto bg-white p-6 rounded-xl shadow">
+    <div class="p-6 bg-slate-100 card h-220">
+        <div class="max-w-2xl mx-auto bg-white p-6 rounded-xl h-full flex flex-col">
             <h2 class="text-lg font-bold mb-4 border-b pb-2">우선순위 승인여부</h2>
 
             <div>
@@ -85,14 +85,13 @@ onBeforeMount(async () => {
                     <InputText id="reason_rejection" type="text" placeholder="반려사유를 입력해주세요" class="w-full md:w-[30rem] mb-8" v-model="reason_rejection" />
                 </div>
                 <div class="text-right">
-                    <button @click="addPriorityInfo('a1')" class="bg-green-400 hover:bg-green-500 text-white px-6 py-2 rounded-full">승인</button>
-                    <button
+                    <Button label="승인" type="button" @click="addPriorityInfo('a1')" class="px-6 py-2 rounded-full" />
+                    <Button type="button" label="반려" severity="danger"
                         :disabled="!reason_rejection || reason_rejection.trim() === ''"
                         @click="addPriorityInfo('a2', reason_rejection)"
-                        class="bg-green-400 hover:bg-green-500 text-white px-6 py-2 rounded-full disabled:bg-gray-300 disabled:cursor-not-allowed disabled:hover:bg-gray-300"
-                    >
-                        반려
-                    </button>
+                        class="px-6 py-2 text-white disabled:bg-gray-300 disabled:cursor-not-allowed disabled:hover:bg-gray-300"
+                    />
+     
                 </div>
             </div>
         </div>
