@@ -59,63 +59,60 @@ LEFT JOIN common_code c
 LEFT JOIN (
     SELECT sp.survey_no
 
-         /* 검토 = 대기 */
-         , SUM(
-             CASE
-               WHEN spr.finish = 0 AND spr.result_approval = 'a0' THEN 1
-               ELSE 0
-             END
-           ) AS review_cnt
+         /* 대기 = 대기중인 진행계획 + 대기중인 결과 */
+         , COUNT(DISTINCT CASE
+             WHEN spr.finish = 0 AND sp.plan_approval = 'a0'
+             THEN sp.support_plan_no
+           END)
+           + COUNT(DISTINCT CASE
+             WHEN spr.finish = 0 AND spr.result_approval = 'a0'
+             THEN spr.support_result_no
+           END) AS review_cnt
 
-         /* 승인 */
-         , SUM(
-             CASE
-               WHEN spr.finish = 0 AND spr.result_approval = 'a1' THEN 1
-               ELSE 0
-             END
-           ) AS approve_cnt
+         /* 승인 = 승인중인 진행계획 + 승인중인 결과 */
+         , COUNT(DISTINCT CASE
+             WHEN spr.finish = 0 AND sp.plan_approval = 'a1'
+             THEN sp.support_plan_no
+           END)
+           + COUNT(DISTINCT CASE
+             WHEN spr.finish = 0 AND spr.result_approval = 'a1'
+             THEN spr.support_result_no
+           END) AS approve_cnt
 
-         /* 반려 */
-         , SUM(
-             CASE
-               WHEN spr.finish = 0 AND spr.result_approval = 'a2' THEN 1
-               ELSE 0
-             END
-           ) AS reject_cnt
+         /* 반려 = 반려중인 진행계획 + 반려중인 결과 */
+         , COUNT(DISTINCT CASE
+             WHEN spr.finish = 0 AND sp.plan_approval = 'a2'
+             THEN sp.support_plan_no
+           END)
+           + COUNT(DISTINCT CASE
+             WHEN spr.finish = 0 AND spr.result_approval = 'a2'
+             THEN spr.support_result_no
+           END) AS reject_cnt
 
-         /* e2, e3용 결과 */
-         , SUM(
-             CASE
-               WHEN spr.finish = 0 AND spr.result_approval = 'a1' THEN 1
-               ELSE 0
-             END
-           ) AS result_cnt
+         /* e2, e3용 결과 = 승인된 결과 */
+         , COUNT(DISTINCT CASE
+             WHEN spr.finish = 0 AND spr.result_approval = 'a1'
+             THEN spr.support_result_no
+           END) AS result_cnt
 
          /* e1용 진행중 계산용: 승인된 계획 */
-         , SUM(
-             CASE
-               WHEN sp.plan_approval = 'a1' THEN 1
-               ELSE 0
-             END
-           ) AS plan_approve_cnt
+         , COUNT(DISTINCT CASE
+             WHEN sp.plan_approval = 'a1'
+             THEN sp.support_plan_no
+           END) AS plan_approve_cnt
 
          /* e1용 결과 계산용: 승인된 결과 */
-         , SUM(
-             CASE
-               WHEN spr.result_approval = 'a1' THEN 1
-               ELSE 0
-             END
-           ) AS result_approve_cnt
+         , COUNT(DISTINCT CASE
+             WHEN spr.result_approval = 'a1'
+             THEN spr.support_result_no
+           END) AS result_approve_cnt
 
          /* 종결 */
-         ,SUM(
-              CASE
-                WHEN spr.finish = 1
-                AND spr.result_approval = 'a1'
-              THEN 1
-              ELSE 0
-            END
-            ) AS finish_cnt
+         , COUNT(DISTINCT CASE
+             WHEN spr.finish = 1
+              AND spr.result_approval = 'a1'
+             THEN spr.support_result_no
+           END) AS finish_cnt
 
     FROM support_plan sp
     LEFT JOIN support_plan_result spr
