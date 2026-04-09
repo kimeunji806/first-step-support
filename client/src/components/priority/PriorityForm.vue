@@ -86,7 +86,7 @@ onBeforeMount(async () => {
             <h2 class="text-lg font-bold mb-4 border-b pb-2">우선순위가 {{ priorityAlert }}입니다.</h2>
 
             <div class="text-right">
-                <button @click="addPriorityInfo" class="bg-green-400 hover:bg-green-500 text-white px-6 py-2 rounded-full">등록</button>
+                <Button label="등록" type="button" @click="addPriorityInfo" />
             </div>
         </div>
     </div>
