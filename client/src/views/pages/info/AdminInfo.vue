@@ -157,7 +157,7 @@ const saveUser = async () => {
 
         alert('저장 완료');
 
-        await managerFetch(ins_no);
+        await handleChange(ins_no);
 
         const updatedUser = managerList.value.find((u) => String(u.user_no) === String(mNo)); //담당자 리스트중 최근에 선택된 번호랑 같은 값 찾음
 
@@ -337,3 +337,4 @@ onBeforeMount(() => {
         </div>
     </div>
 </template>
+
