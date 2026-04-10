@@ -166,7 +166,7 @@ const goToBack = () => {
                     <div class="flex-1 flex items-center justify-center bg-white">
                         <div class="w-96 xl:w-[480px] flex flex-col gap-5">
                             <h2 class="text-2xl font-bold text-center text-surface-800">회원 탈퇴</h2>
-                            <p class="text-xl text-red-500 text-center font-bold">회원탈퇴 시 지원건에 대한 책임은 개인에게 있습니다.</p>
+                            <p class="text-xl text-red-300 text-center font-bold">회원 탈퇴를 진행하시겠습니까? 현재 제공받고 계신 지원 서비스에 차질이 생길 수 있으니 신중하게 결정해 주세요.</p>
 
                             <div class="flex flex-col gap-2">
                                 <label class="font-semibold text-surface-700">아이디</label>
