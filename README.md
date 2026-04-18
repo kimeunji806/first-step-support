@@ -1,7 +1,7 @@
 
 # FIRST STEP : 함께하는 첫걸음
 
----
+<br/>
  
 # 발달장애인 지원관리 시스템
 
@@ -40,7 +40,7 @@
 
 - 설계 → 구현 → 배포까지 전 과정 참여
 
----
+<br/>
 
 ## 팀 구성 및 역할
 
@@ -85,7 +85,8 @@
  </tr>
 </table>
 
----
+<br/>
+
 ## 기술 스택 시각화
 
 | 구분 | 사용 기술 |
@@ -98,7 +99,8 @@
 | Deployment | ![Naver Cloud](https://img.shields.io/badge/NCP-03C75A?style=for-the-badge&logo=naver&logoColor=white) ![Nginx](https://img.shields.io/badge/Nginx-009639?style=for-the-badge&logo=nginx&logoColor=white) ![PM2](https://img.shields.io/badge/PM2-2B037A?style=for-the-badge&logo=pm2&logoColor=white) ![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white) |
 
 
----
+<br/>
+
 ## 내가 담당한 기능
 
 Frontend(Vue 3) + Backend(Node.js/Express) 풀스택 구현 및 DB 설계/관리를 담당하였습니다.
@@ -129,7 +131,8 @@ Frontend(Vue 3) + Backend(Node.js/Express) 풀스택 구현 및 DB 설계/관리
 - 테이블 생성 및 변경 이력 스크립트 관리 (버전별 DDL 스크립트 관리)
 - NCP(Naver Cloud Platform)에 MariaDB 서버 직접 구축 및 설정
 
----
+<br/>
+
 ## 프로젝트 구조
 
 ```bash
@@ -171,7 +174,7 @@ the_first/
 └── README.md
 ```
 
----
+<br/>
 
 ## 시스템설계
 
@@ -180,7 +183,7 @@ the_first/
 <img width="1063" height="584" alt="image" src="https://github.com/user-attachments/assets/69ed7149-b1ec-49c9-8339-7b038376835e" />
 
 
----
+<br/>
 
 ## 메인 화면
 ### 지원신청내역
@@ -207,8 +210,7 @@ the_first/
 ### 공지사항
 <img width="1920" height="945" alt="image" src="https://github.com/user-attachments/assets/b659a945-cec3-4b6e-b523-78c5a0094882" />
 
----
-
+<br/>
 
 ## 전체 주요 기능
 
@@ -246,7 +248,7 @@ the_first/
 - 기관 운영관리
 - 공지사항 등록 / 조회 / 수정 / 삭제
 
----
+<br/>
 
 ## 업무 흐름
 
@@ -260,7 +262,7 @@ the_first/
 8. 기관관리자가 지원결과를 승인 혹은 반려합니다.
 9. 각 단계별로 첨부파일과 수정이력을 함께 관리합니다.
     
----
+<br/>
 
 ## 출처
 - 로고 이미지: [Freepik](https://www.freepik.com/) (Designed by Freepik)
