@@ -124,7 +124,7 @@ Frontend(Vue 3) + Backend(Node.js/Express) 풀스택 구현 및 DB 설계/관리
 - 기관관리자 계정 회원가입 승인
 
 ### 🗄️ DB 관리 (Naver Cloud Platform)
-- ERD 설계 및 지속적 수정 관리
+- ERD 지속적 수정 관리
 - 테이블 생성 및 변경 이력 스크립트 관리 (버전별 DDL 스크립트 관리)
 - NCP(Naver Cloud Platform)에 MariaDB 서버 직접 구축 및 설정
 
