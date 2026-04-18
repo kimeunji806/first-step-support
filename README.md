@@ -45,22 +45,31 @@
 ## 기술 스택
 
 **Frontend**
-- Vue 3, Vite, PrimeVue, Tailwind CSS
+- Vue 3
+- Vite
+- PrimeVue
+- Tailwind CSS
 
 **Backend**
-- Node.js, Express
+- Node.js
+- Express
 
 **Database**
 - MariaDB
 
 **Dev Tools**
-- VS Code, MySQL Workbench
+- VS Code
+- MySQL Workbench
 
 **Collaboration**
-- Git, GitHub
+- Git
+- GitHub
 
 **Deployment**
-- NCP (Naver Cloud Platform), Nginx, PM2, GitHub Actions
+- NCP (Naver Cloud Platform)
+- Nginx
+- PM2
+- GitHub Actions
 
 ---
 
