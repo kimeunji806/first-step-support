@@ -228,4 +228,8 @@ the_first/
 7. 기관담당자가 지원결과를 작성하고 승인 요청 결재를 상신합니다.
 8. 기관관리자가 지원결과를 승인 혹은 반려합니다.
 9. 각 단계별로 첨부파일과 수정이력을 함께 관리합니다.
+    
+---
 
+## ℹ️ 출처 (References)
+- 로고 이미지: [Freepik](https://www.freepik.com/) (Designed by Freepik)
