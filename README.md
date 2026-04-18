@@ -31,8 +31,6 @@
 - **DB 설계 및 MariaDB 직접 구축 (NCP)**
 - 파일 업로드 및 수정이력 관리 기능 구현
 
- > 설계 → 구현 → 배포까지 전 과정 참여
-
 ---
 
 ## 팀 구성 및 역할
@@ -45,6 +43,28 @@
 ---
 
 ## 기술 스택
+
+**Frontend**
+- Vue 3, Vite, PrimeVue, Tailwind CSS
+
+**Backend**
+- Node.js, Express
+
+**Database**
+- MariaDB
+
+**Dev Tools**
+- VS Code, MySQL Workbench
+
+**Collaboration**
+- Git, GitHub
+
+**Deployment**
+- NCP (Naver Cloud Platform), Nginx, PM2, GitHub Actions
+
+---
+
+## 기술 스택 시각화
 
 | 구분 | 사용 기술 |
 |------|----------|
