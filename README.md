@@ -231,5 +231,5 @@ the_first/
     
 ---
 
-## ℹ️ 출처 (References)
+## 출처
 - 로고 이미지: [Freepik](https://www.freepik.com/) (Designed by Freepik)
